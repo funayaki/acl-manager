@@ -1,4 +1,6 @@
 <?php
+namespace Controller\Component;
+
 class AclReflectorComponent extends Component
 {
 	private $controller = null;
@@ -15,7 +17,7 @@ class AclReflectorComponent extends Component
 	public function getPluginName($ctrlName = null)
 	{
 		if (Configure::version() < '2.7') {
-			$arr = String::tokenize($ctrlName, '/');
+			$arr = Text::tokenize($ctrlName, '/');
 		} else {
 			$arr = CakeText::tokenize($ctrlName, '/');
 		}
@@ -29,7 +31,7 @@ class AclReflectorComponent extends Component
 	public function getPluginControllerName($ctrlName = null)
 	{
 		if (Configure::version() < '2.7') {
-			$arr = String::tokenize($ctrlName, '/');
+			$arr = Text::tokenize($ctrlName, '/');
 		} else {
 			$arr = CakeText::tokenize($ctrlName, '/');
 		}
@@ -72,12 +74,12 @@ class AclReflectorComponent extends Component
 	
 	public function get_all_plugins_paths()
 	{
-	    $plugin_names = CakePlugin::loaded();
+	    $plugin_names = Plugin::loaded();
 	    
 	    $plugin_paths = array();
 	    foreach($plugin_names as $plugin_name)
 	    {
-	        $plugin_paths[] = CakePlugin::path($plugin_name);
+	        $plugin_paths[] = Plugin::path($plugin_name);
 	    }
 	    
 	    return $plugin_paths;
@@ -134,7 +136,7 @@ class AclReflectorComponent extends Component
 					
 					if(!$filter_default_controller || Inflector::camelize($plugin_name) . 'Controller' != $controller_class_name)
 					{
-					    App::uses($controller_class_name, $plugin_name . '.Controller');
+					    /* TODO: App::uses($controller_class_name, $plugin_name . '.Controller'); */
 					    
     					if (!preg_match('/^'. Inflector::camelize($plugin_name) . 'App/', $controller_class_name))
     					{
@@ -182,7 +184,6 @@ class AclReflectorComponent extends Component
 	{
 		$controllers = array();
 		
-		App::uses('Folder', 'Utility');
 		$folder = new Folder();
 		
 		$didCD = $folder->cd(APP . 'Controller');
@@ -198,7 +199,7 @@ class AclReflectorComponent extends Component
 				//$controller_class_name = Inflector::camelize(substr($file, 0, strlen($file) - strlen('Controller.php')));
 				
 				$controller_class_name = Inflector::camelize(substr($file, 0, strlen($file) - strlen('.php')));
-				App::uses($controller_class_name, 'Controller');
+				/* TODO: App::uses($controller_class_name, 'Controller'); */
 				
 				$controllers[] = array('file' => $fileName, 'name' => substr($controller_class_name, 0, strlen($controller_class_name) - strlen('Controller')));
 			}

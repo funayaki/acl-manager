@@ -7,6 +7,8 @@
  * 
  * @property AclReflectorComponent $AclReflector 
  */
+namespace Controller;
+
 class ArosController extends AclAppController
 {
 
@@ -19,7 +21,7 @@ class ArosController extends AclAppController
         //'order' => array('display_name' => 'asc')
 		);
 	
-	function beforeFilter()
+	function beforeFilter(Event $event)
 	{
 	    $this->loadModel(Configure :: read('acl.aro.role.model'));
 	    $this->loadModel(Configure :: read('acl.aro.user.model'));
@@ -230,7 +232,7 @@ class ArosController extends AclAppController
     	{
 			if (Configure::version() < '2.7')
 			{
-				$arr = String::tokenize($full_action, '/');
+				$arr = Text::tokenize($full_action, '/');
 			}
 			else
 			{
@@ -291,7 +293,7 @@ class ArosController extends AclAppController
     	{
 			if (Configure::version() < '2.7')
 			{
-				$arr = String::tokenize($full_action, '/');
+				$arr = Text::tokenize($full_action, '/');
 			}
 			else
 			{
@@ -416,7 +418,7 @@ class ArosController extends AclAppController
 		    	{
 					if (Configure::version() < '2.7')
 					{
-						$arr = String::tokenize($full_action, '/');
+						$arr = Text::tokenize($full_action, '/');
 					}
 					else
 					{

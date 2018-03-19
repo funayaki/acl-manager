@@ -1,4 +1,6 @@
 <?php
+namespace Lib;
+
 class AclRouter
 {
     /**

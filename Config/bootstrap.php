@@ -1,5 +1,4 @@
 <?php
-App::uses('AclRouter', 'Acl.Lib');
 
 /* -------------------------------------------------------------------
  * The settings below have to be loaded to make the acl plugin work.

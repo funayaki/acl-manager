@@ -155,13 +155,13 @@ else
             			
         		if($ctrl_info['permissions'][$user[$user_model_name][$user_pk_name]] == 1)
         		{
-        		    $this->Js->buffer('register_user_toggle_right(true, "' . $this->Html->url('/') . '", "right__' . $user[$user_model_name][$user_pk_name] . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $user[$user_model_name][$user_pk_name] . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
+        		    $this->Js->buffer('register_user_toggle_right(true, "' . $this->Url->build('/') . '", "right__' . $user[$user_model_name][$user_pk_name] . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $user[$user_model_name][$user_pk_name] . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
         		    
         		    echo $this->Html->image('/acl/img/design/tick.png', array('class' => 'pointer'));
         		}
         		elseif($ctrl_info['permissions'][$user[$user_model_name][$user_pk_name]] == 0)
         		{
-        		    $this->Js->buffer('register_user_toggle_right(false, "' . $this->Html->url('/') . '", "right__' . $user[$user_model_name][$user_pk_name] . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $user[$user_model_name][$user_pk_name] . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
+        		    $this->Js->buffer('register_user_toggle_right(false, "' . $this->Url->build('/') . '", "right__' . $user[$user_model_name][$user_pk_name] . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $user[$user_model_name][$user_pk_name] . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
         		    
         			echo $this->Html->image('/acl/img/design/cross.png', array('class' => 'pointer'));
         		}
@@ -212,13 +212,13 @@ else
     	            
 		    		if($method['permissions'][$user[$user_model_name][$user_pk_name]] == 1)
 		    		{
-		    		    $this->Js->buffer('register_user_toggle_right(true, "' . $this->Html->url('/') . '", "right_' . $plugin_name . '_' . $user[$user_model_name][$user_pk_name] . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $user[$user_model_name][$user_pk_name] . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
+		    		    $this->Js->buffer('register_user_toggle_right(true, "' . $this->Url->build('/') . '", "right_' . $plugin_name . '_' . $user[$user_model_name][$user_pk_name] . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $user[$user_model_name][$user_pk_name] . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
 		    		    
 		    			echo $this->Html->image('/acl/img/design/tick.png', array('class' => 'pointer'));
 		    		}
 		    		elseif($method['permissions'][$user[$user_model_name][$user_pk_name]] == 0)
 		    		{
-		    		    $this->Js->buffer('register_user_toggle_right(false, "' . $this->Html->url('/') . '", "right_' . $plugin_name . '_' . $user[$user_model_name][$user_pk_name] . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $user[$user_model_name][$user_pk_name] . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
+		    		    $this->Js->buffer('register_user_toggle_right(false, "' . $this->Url->build('/') . '", "right_' . $plugin_name . '_' . $user[$user_model_name][$user_pk_name] . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $user[$user_model_name][$user_pk_name] . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
 		    			
 		    		    echo $this->Html->image('/acl/img/design/cross.png', array('class' => 'pointer'));
 		    		}

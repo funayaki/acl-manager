@@ -7,6 +7,8 @@
  *
  * @property AclManagerComponent $AclManager
  */
+namespace Controller;
+
 class AcosController extends AclAppController {
 
 	var $name = 'Acos';

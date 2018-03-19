@@ -69,6 +69,7 @@ foreach($roles as $role)
 	</tr>
 	
 	<?php
+	$js_init_done = array();
 	$previous_ctrl_name = '';
 	$i = 0;
 	
@@ -94,30 +95,18 @@ foreach($roles as $role)
 		    	{
 		    	    echo '<td>';
 		    	    echo '<span id="right__' . $role[$role_model_name][$role_pk_name] . '_' . $controller_name . '_' . $ctrl_info['name'] . '">';
-	    		
-		    	    if(isset($ctrl_info['permissions'][$role[$role_model_name][$role_pk_name]]))
-		    	    {
-    		    		if($ctrl_info['permissions'][$role[$role_model_name][$role_pk_name]] == 1)
-    		    		{
-    		    			$this->Js->buffer('register_role_toggle_right(true, "' . $this->Html->url('/') . '", "right__' . $role[$role_model_name][$role_pk_name] . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $role[$role_model_name][$role_pk_name] . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
-        		    
-    		    			echo $this->Html->image('/acl/img/design/tick.png', array('class' => 'pointer'));
-    		    		}
-    		    		else
-    		    		{
-    		    			$this->Js->buffer('register_role_toggle_right(false, "' . $this->Html->url('/') . '", "right__' . $role[$role_model_name][$role_pk_name] . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $role[$role_model_name][$role_pk_name] . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
-    		    		    
-    		    		    echo $this->Html->image('/acl/img/design/cross.png', array('class' => 'pointer'));
-    		    		}
-		    	    }
-		    	    else
-		    	    {
-		    	        /*
-		    	         * The right of the action for the role is unknown
-		    	         */
-		    	        echo $this->Html->image('/acl/img/design/important16.png', array('title' => __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.')));
-		    	    }
-		    		
+	    			
+		    	   /*
+					* The right of the action for the role must still be loaded
+    		    	*/
+    		        echo $this->Html->image('/acl/img/ajax/waiting16.gif', array('title' => __d('acl', 'loading')));
+    		    	
+    		        if(!in_array($controller_name . '_' . $role[$role_model_name][$role_pk_name], $js_init_done))
+    		        {
+    		        	$js_init_done[] = $controller_name . '_' . $role[$role_model_name][$role_pk_name];
+    		        	$this->Js->buffer('init_register_role_controller_toggle_right("' . $this->Url->build('/', true) . '", "' . $role[$role_model_name][$role_pk_name] . '", "", "' . $controller_name . '", "' . __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.') . '");');
+    		        }
+    		        
 		    		echo '</span>';
 	    	
         	    	echo ' ';
@@ -173,33 +162,17 @@ foreach($roles as $role)
     		    	    echo '<td>';
     		    	    echo '<span id="right_' . $plugin_name . '_' . $role[$role_model_name][$role_pk_name] . '_' . $plugin_ctrler_name . '_' . $method['name'] . '">';
     		    	    
-    		    	    if(isset($ctrl_info['permissions'][$role[$role_model_name][$role_pk_name]]))
-    		    	    {
-        		    		if($method['permissions'][$role[$role_model_name][$role_pk_name]] == 1)
-        		    		{
-        		    			//echo '<td>' . $this->Html->link($this->Html->image('/acl/img/design/tick.png'), '/admin/acl/aros/deny_role_permission/' . $role[$role_model_name][$role_pk_name] . '/plugin:' . $plugin_name . '/controller:' . $plugin_ctrler_name . '/action:' . $method['name'], array('escape' => false)) . '</td>';
-        		    			
-        		    		    $this->Js->buffer('register_role_toggle_right(true, "' . $this->Html->url('/') . '", "right_' . $plugin_name . '_' . $role[$role_model_name][$role_pk_name] . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $role[$role_model_name][$role_pk_name] . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
-    		    		    
-        		    		    echo $this->Html->image('/acl/img/design/tick.png', array('class' => 'pointer'));
-        		    		}
-        		    		else
-        		    		{
-        		    			//echo '<td>' . $this->Html->link($this->Html->image('/acl/img/design/cross.png'), '/admin/acl/aros/grant_role_permission/' . $role[$role_model_name][$role_pk_name] . '/plugin:' . $plugin_name .'/controller:' . $plugin_ctrler_name . '/action:' . $method['name'], array('escape' => false)) . '</td>';
-        		    			
-        		    		    $this->Js->buffer('register_role_toggle_right(false, "' . $this->Html->url('/') . '", "right_' . $plugin_name . '_' . $role[$role_model_name][$role_pk_name] . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $role[$role_model_name][$role_pk_name] . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
-    		    			
-        		    		    echo $this->Html->image('/acl/img/design/cross.png', array('class' => 'pointer'));
-        		    		}
-    		    	    }
-    		    	    else
-    		    	    {
-    		    	        /*
-    		    	         * The right of the action for the role is unknown
-    		    	         */
-    		    	        echo $this->Html->image('/acl/img/design/important16.png', array('title' => __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.')));
-    		    	    }
-    		    		
+    		    	    /*
+    		    	    * The right of the action for the role must still be loaded
+    		    	    */
+    		    	    echo $this->Html->image('/acl/img/ajax/waiting16.gif', array('title' => __d('acl', 'loading')));
+    		    	    
+	    		    	if(!in_array($plugin_name . "_" . $plugin_ctrler_name . '_' . $role[$role_model_name][$role_pk_name], $js_init_done))
+	    		        {
+	    		        	$js_init_done[] = $plugin_name . "_" . $plugin_ctrler_name . '_' . $role[$role_model_name][$role_pk_name];
+	    		        	$this->Js->buffer('init_register_role_controller_toggle_right("' . $this->Url->build('/', true) . '", "' . $role[$role_model_name][$role_pk_name] . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.') . '");');
+	    		        }
+    		        
     		    		echo '</span>';
 	    	
             	    	echo ' ';

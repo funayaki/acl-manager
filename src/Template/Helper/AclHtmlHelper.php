@@ -1,5 +1,6 @@
 <?php
-App::uses('HtmlHelper', 'View/Helper');
+
+namespace View\Helper;
 
 class AclHtmlHelper extends HtmlHelper
 {

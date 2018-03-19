@@ -7,11 +7,13 @@
  *
  * @property AclManagerComponent $AclManager
  */
+namespace Controller;
+
 class AclAppController extends AppController
 {
     var $components = array('RequestHandler', 'Acl.AclManager', 'Acl.AclReflector');
 	
-    function beforeFilter()
+    function beforeFilter(Event $event)
 	{
 	    parent :: beforeFilter();
 	    

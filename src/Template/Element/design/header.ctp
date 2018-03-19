@@ -4,7 +4,7 @@ echo $this->Html->css('/acl/css/acl.css');
 <div id="plugin_acl">
 	
 	<?php
-	echo $this->Session->flash('plugin_acl');
+	echo $this->Flash->render('plugin_acl');
 	?>
 	
 	<h1><?php echo __d('acl', 'ACL plugin'); ?></h1>

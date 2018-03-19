@@ -95,7 +95,7 @@ echo $this->element('Aros/links');
     		    if(!in_array($controller_name . '_' . $user[$user_model_name][$user_pk_name], $js_init_done))
     	        {
     	        	$js_init_done[] = $controller_name . '_' . $user[$user_model_name][$user_pk_name];
-    	        	$this->Js->buffer('init_register_user_controller_toggle_right("' . $this->Html->url('/', true) . '", "' . $user[$user_model_name][$user_pk_name] . '", "", "' . $controller_name . '", "' . __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.') . '");');
+    	        	$this->Js->buffer('init_register_user_controller_toggle_right("' . $this->Url->build('/', true) . '", "' . $user[$user_model_name][$user_pk_name] . '", "", "' . $controller_name . '", "' . __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.') . '");');
     	        }
     	        
     	    	echo '</span>';
@@ -142,7 +142,7 @@ echo $this->element('Aros/links');
     	            if(!in_array($plugin_name . "_" . $plugin_ctrler_name . '_' . $user[$user_model_name][$user_pk_name], $js_init_done))
     		        {
     		        	$js_init_done[] = $plugin_name . "_" . $plugin_ctrler_name . '_' . $user[$user_model_name][$user_pk_name];
-    		        	$this->Js->buffer('init_register_user_controller_toggle_right("' . $this->Html->url('/', true) . '", "' . $user[$user_model_name][$user_pk_name] . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.') . '");');
+    		        	$this->Js->buffer('init_register_user_controller_toggle_right("' . $this->Url->build('/', true) . '", "' . $user[$user_model_name][$user_pk_name] . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.') . '");');
     		        }
     		        
     		    	echo '</span>';
