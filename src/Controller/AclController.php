@@ -7,20 +7,22 @@
  */
 namespace Controller;
 
-class AclController extends AclAppController {
+class AclController extends AclAppController
+{
 
-	var $name = 'Acl';
-	var $uses = null;
-	
-	function index()
-	{
-	    $this->redirect('/admin/acl/aros');
-	}
-	
-	function admin_index()
-	{
-	    $this->redirect('/admin/acl/acos');
-	}
-	
+    var $name = 'Acl';
+    var $uses = null;
+
+    function index()
+    {
+        $this->redirect('/admin/acl/aros');
+    }
+
+    function admin_index()
+    {
+        $this->redirect('/admin/acl/acos');
+    }
+
 }
+
 ?>

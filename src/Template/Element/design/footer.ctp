@@ -1,6 +1,5 @@
 <?php
-if(isset($this->Js))
-{
+if (isset($this->Js)) {
     echo $this->Js->writeBuffer();
 }
 ?>
