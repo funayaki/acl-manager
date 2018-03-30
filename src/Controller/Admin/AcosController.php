@@ -7,38 +7,35 @@
  *
  * @property AclManagerComponent $AclManager
  */
-namespace Controller;
+namespace AclManager\Controller\Admin;
 
-class AcosController extends AclAppController
+use AclManager\Controller\AppController;
+
+class AcosController extends AppController
 {
-
-    var $name = 'Acos';
-
-    //var $components = array('Acl', 'Acl.AclManager');
-
-    function admin_index()
+    public function index()
     {
 
     }
 
-    function admin_empty_acos($run = null)
+    public function emptyAcos($run = null)
     {
         /*
          * Delete ACO with 'alias' controllers
          * -> all ACOs belonging to the actions tree will be deleted, but eventual ACO that are not actions will be kept
          */
-        $controller_aco = $this->Aco->findByAlias('controllers');
+        $controller_aco = $this->Acl->Aco->findByAlias('controllers')->first();
 
         if (!empty($controller_aco)) {
             $this->set('actions_exist', true);
 
             if (isset($run)) {
-                if ($this->Aco->delete($controller_aco['Aco']['id'])) {
+                if ($this->Acl->Aco->delete($controller_aco)) {
                     $this->set('actions_exist', false);
 
-                    $this->Session->setFlash(__d('acl', 'The actions in the ACO table have been deleted'), 'flash_message', null, 'plugin_acl');
+                    $this->Flash->success(__d('acl', 'The actions in the ACO table have been deleted'));
                 } else {
-                    $this->Session->setFlash(__d('acl', 'The actions in the ACO table could not be deleted'), 'flash_error', null, 'plugin_acl');
+                    $this->Flash->error(__d('acl', 'The actions in the ACO table could not be deleted'));
                 }
 
                 $this->set('run', true);
@@ -50,7 +47,7 @@ class AcosController extends AclAppController
         }
     }
 
-    function admin_build_acl($run = null)
+    public function buildAcl($run = null)
     {
         if (isset($run)) {
             $logs = $this->AclManager->create_acos();
@@ -66,7 +63,7 @@ class AcosController extends AclAppController
         }
     }
 
-    function admin_prune_acos($run = null)
+    public function pruneAcos($run = null)
     {
         if (isset($run)) {
             $logs = $this->AclManager->prune_acos();
@@ -82,7 +79,7 @@ class AcosController extends AclAppController
         }
     }
 
-    function admin_synchronize($run = null)
+    public function synchronize($run = null)
     {
         if (isset($run)) {
             $prune_logs = $this->AclManager->prune_acos();
@@ -103,5 +100,3 @@ class AcosController extends AclAppController
         }
     }
 }
-
-?>

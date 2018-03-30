@@ -7,15 +7,24 @@
  *
  * @property AclManagerComponent $AclManager
  */
-namespace Controller;
+namespace AclManager\Controller;
 
-class AclAppController extends AppController
+use AclManager\Controller\Component\AclManagerComponent;
+use App\Controller\AppController as BaseController;
+use Cake\Core\Configure;
+use Cake\Event\Event;
+use Cake\Utility\Inflector;
+
+/**
+ * @property AclManagerComponent AclManager
+ */
+class AppController extends BaseController
 {
-    var $components = array('RequestHandler', 'Acl.AclManager', 'Acl.AclReflector');
+    var $components = array('RequestHandler', 'Auth', 'Acl.Acl', 'AclManager.AclManager', 'AclManager.AclReflector');
 
-    function beforeFilter(Event $event)
+    public function beforeFilter(Event $event)
     {
-        parent:: beforeFilter();
+        parent:: beforeFilter($event);
 
         $this->_check_config();
         $this->_check_files_updates();
@@ -70,7 +79,7 @@ class AclAppController extends AppController
         }
     }
 
-    function _check_files_updates()
+    protected function _check_files_updates()
     {
         if ($this->request->params['controller'] != 'acos'
             || ($this->request->params['action'] != 'admin_synchronize' &&
@@ -124,7 +133,7 @@ class AclAppController extends AppController
         }
     }
 
-    function _get_passed_aco_path()
+    protected function _get_passed_aco_path()
     {
         $aco_path = isset($this->params['named']['plugin']) ? $this->params['named']['plugin'] : '';
         $aco_path .= empty($aco_path) ? $this->params['named']['controller'] : '/' . $this->params['named']['controller'];
@@ -133,14 +142,14 @@ class AclAppController extends AppController
         return $aco_path;
     }
 
-    function _set_aco_variables()
+    protected function _set_aco_variables()
     {
         $this->set('plugin', isset($this->params['named']['plugin']) ? $this->params['named']['plugin'] : '');
         $this->set('controller_name', $this->params['named']['controller']);
         $this->set('action', $this->params['named']['action']);
     }
 
-    function _get_role_primary_key_name()
+    protected function _get_role_primary_key_name()
     {
         $forced_pk_name = Configure:: read('acl.aro.role.primary_key');
         if (!empty($forced_pk_name)) {
@@ -153,7 +162,7 @@ class AclAppController extends AppController
         }
     }
 
-    function _get_user_primary_key_name()
+    protected function _get_user_primary_key_name()
     {
         $forced_pk_name = Configure:: read('acl.aro.user.primary_key');
         if (!empty($forced_pk_name)) {
@@ -166,7 +175,7 @@ class AclAppController extends AppController
         }
     }
 
-    function _get_role_foreign_key_name()
+    protected function _get_role_foreign_key_name()
     {
         $forced_fk_name = Configure:: read('acl.aro.role.foreign_key');
         if (!empty($forced_fk_name)) {
@@ -175,14 +184,12 @@ class AclAppController extends AppController
             /*
              * Return the foreign key's name that follows the CakePHP conventions
              */
-            return Inflector:: underscore(Configure:: read('acl.aro.role.model')) . '_id';
+            return Inflector:: underscore(Inflector::singularize(Configure:: read('acl.aro.role.model'))) . '_id';
         }
     }
 
-    function _return_to_referer()
+    protected function _return_to_referer()
     {
-        $this->redirect($this->referer(array('action' => 'admin_index')));
+        $this->redirect($this->referer(array('action' => 'index')));
     }
 }
-
-?>

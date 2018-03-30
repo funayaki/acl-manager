@@ -39,11 +39,11 @@ if ($run) {
         echo '</p>';
 
         echo '<p>';
-        echo $this->Html->link($this->Html->image('/acl/img/design/add.png') . ' ' . __d('acl', 'Build'), '/admin/acl/acos/build_acl/run', array('escape' => false));
+        echo $this->Html->link($this->Html->image('/acl_manager/img/design/add.png') . ' ' . __d('acl', 'Build'), '/admin/acl_manager/acos/build_acl/run', array('escape' => false));
         echo '</p>';
     } else {
         echo '<p style="font-style:italic;">';
-        echo $this->Html->image('/acl/img/design/tick.png') . ' ' . __d('acl', 'There is no ACO node to create');
+        echo $this->Html->image('/acl_manager/img/design/tick.png') . ' ' . __d('acl', 'There is no ACO node to create');
         echo '</p>';
     }
 }

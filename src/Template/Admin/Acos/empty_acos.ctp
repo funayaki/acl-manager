@@ -20,7 +20,7 @@ if ($actions_exist) {
     echo '</p>';
 
     echo '<p>';
-    echo $this->Html->link($this->Html->image('/acl/img/design/cross.png') . ' ' . __d('acl', 'Clear ACOs'), '/admin/acl/acos/empty_acos/run', array('confirm' => __d('acl', 'Are you sure you want to destroy all existing ACOs ?'), 'escape' => false));
+    echo $this->Html->link($this->Html->image('/acl_manager/img/design/cross.png') . ' ' . __d('acl', 'Clear ACOs'), '/admin/acl_manager/acos/empty_acos/run', array('confirm' => __d('acl', 'Are you sure you want to destroy all existing ACOs ?'), 'escape' => false));
     echo '</p>';
 } else {
     echo '<p style="font-style:italic;">';

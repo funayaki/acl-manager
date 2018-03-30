@@ -1,5 +1,10 @@
 <?php
-namespace Controller\Component;
+namespace AclManager\Controller\Component;
+
+use Cake\Controller\Component;
+use Cake\Core\Plugin;
+use Cake\Filesystem\Folder;
+use Cake\Utility\Inflector;
 
 class AclReflectorComponent extends Component
 {
@@ -7,9 +12,9 @@ class AclReflectorComponent extends Component
 
     /****************************************************************************************/
 
-    public function initialize(Controller $controller)
+    public function initialize(array $config)
     {
-        $this->controller = $controller;
+//        $this->controller = $controller; // TODO FIX ME
     }
 
     /****************************************************************************************/

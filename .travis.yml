@@ -4,9 +4,9 @@ dist: trusty
 
 env:
   matrix:
-    - DB=mysql DATABASE_TEST_URL='mysql://root:@127.0.0.1/test_myapp'
-    - DB=pgsql DATABASE_TEST_URL='postgres://postgres@127.0.0.1/test_myapp'
-    - DB=sqlite DATABASE_TEST_URL='sqlite:///:memory:'
+    - DB=mysql db_dsn='mysql://root:@127.0.0.1/test_myapp'
+    - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/test_myapp'
+    - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
     - DEFAULT=1
 
@@ -36,7 +36,6 @@ before_script:
   - if [[ $PHPCS = 1 ]]; then composer require cakephp/cakephp-codesniffer:^3.0; fi
   - if [[ $PHPCS != 1 ]]; then composer install; fi
   - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"^5.7|^6.0"; fi
-  - if [[ $PHPCS != 1 ]]; then composer run-script post-install-cmd --no-interaction; fi
 
 script:
   - if [[ $PHPCS != 1 ]]; then vendor/bin/phpunit; fi

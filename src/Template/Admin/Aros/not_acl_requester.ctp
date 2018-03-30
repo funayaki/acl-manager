@@ -1,4 +1,6 @@
 <?php
+use Cake\Core\Configure;
+
 echo $this->element('design/header', array('no_acl_links' => true));
 ?>
 

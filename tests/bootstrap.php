@@ -1,147 +1,97 @@
 <?php
-/**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- */
-
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
-use Cake\Log\Log;
+use Cake\Filesystem\Folder;
+use Cake\Routing\DispatcherFactory;
 
-require_once 'vendor/autoload.php';
+if (!defined('DS')) {
+    define('DS', DIRECTORY_SEPARATOR);
+}
 
 define('ROOT', dirname(__DIR__));
-define('APP_DIR', 'test_app');
-define('WEBROOT_DIR', 'webroot');
-
-define('TMP', sys_get_temp_dir() . DS);
+define('TMP', ROOT . DS . 'tmp' . DS);
 define('LOGS', TMP . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
-define('SESSIONS', TMP . 'sessions' . DS);
-
+define('APP', ROOT . DS . 'tests' . DS . 'test_app' . DS . 'src' . DS);
+define('APP_DIR', 'src');
 define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-define('CAKE', CORE_PATH . 'src' . DS);
-define('CORE_TESTS', CORE_PATH . 'tests' . DS);
-define('CORE_TEST_CASES', CORE_TESTS . 'TestCase');
-define('TEST_APP', ROOT . DS . 'tests' . DS . 'test_app' . DS);
-define('LOG_ERROR', LOG_ERR);
+define('CAKE', CORE_PATH . APP_DIR . DS);
 
-// Point app constants to the test app.
-define('APP', TEST_APP . DS);
-define('WWW_ROOT', TEST_APP . WEBROOT_DIR . DS);
-define('TESTS', TEST_APP . 'tests' . DS);
-define('CONFIG', TEST_APP . 'config' . DS);
+define('WWW_ROOT', ROOT . DS . 'webroot' . DS);
+define('CONFIG', ROOT . DS . 'config' . DS);
 
-//@codingStandardsIgnoreStart
-@mkdir(LOGS);
-@mkdir(SESSIONS);
-@mkdir(CACHE);
-@mkdir(CACHE . 'views');
-@mkdir(CACHE . 'models');
-//@codingStandardsIgnoreEnd
+require ROOT . '/vendor/autoload.php';
+require CORE_PATH . 'config/bootstrap.php';
 
-require CAKE . 'Core/ClassLoader.php';
-
-$loader = new Cake\Core\ClassLoader;
-$loader->register();
-
-$loader->addNamespace('Cake\Test\Fixture', ROOT . '/vendor/cakephp/cakephp/tests/Fixture');
-$loader->addNamespace('TestApp', APP . 'src');
-$loader->addNamespace('PluginJs', TEST_APP . 'Plugin/PluginJs/src');
-
-require_once CORE_PATH . 'config' . DS . 'bootstrap.php';
-
-date_default_timezone_set('UTC');
-mb_internal_encoding('UTF-8');
+Configure::write('App', [
+    'namespace' => 'App',
+    'encoding' => 'UTF-8',
+    'paths' => [
+        'templates' => [ROOT . DS . 'tests' . DS . 'test_app' . DS . 'src' . DS . 'Template' . DS],
+    ]
+]);
 
 Configure::write('debug', true);
-Configure::write('App', [
-    'namespace' => 'Acl',
-    'encoding' => 'UTF-8',
-    'base' => false,
-    'baseUrl' => false,
-    'dir' => APP_DIR,
-    'webroot' => WEBROOT_DIR,
-    'www_root' => WWW_ROOT,
-    'fullBaseUrl' => 'http://localhost',
-    'imageBaseUrl' => 'img/',
-    'jsBaseUrl' => 'js/',
-    'cssBaseUrl' => 'css/',
-    'paths' => [
-        'plugins' => [TEST_APP . 'Plugin' . DS],
-        'templates' => [APP . 'Template' . DS]
-    ]
-]);
 
-Cache::setConfig([
-    '_cake_core_' => [
+mb_internal_encoding('UTF-8');
+
+$Tmp = new Folder(TMP);
+$Tmp->create(TMP . 'cache/models', 0770);
+$Tmp->create(TMP . 'cache/persistent', 0770);
+$Tmp->create(TMP . 'cache/views', 0770);
+
+$cache = [
+    'default' => [
         'engine' => 'File',
-        'prefix' => 'cake_core_',
-        'serialize' => true
+        'path' => CACHE,
+    ],
+    '_cake_core_' => [
+        'className' => 'File',
+        'prefix' => 'crud_myapp_cake_core_',
+        'path' => CACHE . 'persistent/',
+        'serialize' => true,
+        'duration' => '+10 seconds',
     ],
     '_cake_model_' => [
-        'engine' => 'File',
-        'prefix' => 'cake_model_',
-        'serialize' => true
-    ]
-]);
+        'className' => 'File',
+        'prefix' => 'crud_my_app_cake_model_',
+        'path' => CACHE . 'models/',
+        'serialize' => 'File',
+        'duration' => '+10 seconds',
+    ],
+];
 
-// Ensure default test connection is defined
+Cache::setConfig($cache);
+
+Plugin::load('Acl', ['bootstrap' => true]);
+Plugin::load('AclManager', ['path' => ROOT . DS, 'autoload' => true, 'bootstrap' => true, 'routes' => true]);
+
+DispatcherFactory::add('Routing');
+DispatcherFactory::add('ControllerFactory');
+
+// Allow local overwrite
+// E.g. in your console: export db_dsn="mysql://root:secret@127.0.0.1/cake_test"
+if (!getenv('db_class') && getenv('db_dsn')) {
+    ConnectionManager::setConfig('test', ['url' => getenv('db_dsn')]);
+    return;
+}
 if (!getenv('db_class')) {
     putenv('db_class=Cake\Database\Driver\Sqlite');
     putenv('db_dsn=sqlite::memory:');
 }
 
+// Uses Travis config then (MySQL, Postgres, ...)
 ConnectionManager::setConfig('test', [
     'className' => 'Cake\Database\Connection',
     'driver' => getenv('db_class'),
     'dsn' => getenv('db_dsn'),
     'database' => getenv('db_database'),
-    'username' => getenv('db_login'),
+    'username' => getenv('db_username'),
     'password' => getenv('db_password'),
     'timezone' => 'UTC',
-    'quoteIdentifiers' => getenv('quoteIdentifiers'),
+    'quoteIdentifiers' => true,
+    'cacheMetadata' => true,
 ]);
-
-Configure::write('Session', [
-    'defaults' => 'php'
-]);
-
-Log::setConfig([
-    'debug' => [
-        'engine' => 'Cake\Log\Engine\FileLog',
-        'levels' => ['notice', 'info', 'debug'],
-        'file' => 'debug',
-    ],
-    'error' => [
-        'engine' => 'Cake\Log\Engine\FileLog',
-        'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
-        'file' => 'error',
-    ]
-]);
-
-if (class_exists('Carbon\Carbon')) {
-    Carbon\Carbon::setTestNow(Carbon\Carbon::now());
-} else {
-    Cake\Chronos\Chronos::setTestNow(Cake\Chronos\Chronos::now());
-    Cake\Chronos\MutableDateTime::setTestNow(Cake\Chronos\MutableDateTime::now());
-    Cake\Chronos\Date::setTestNow(Cake\Chronos\Date::now());
-    Cake\Chronos\MutableDate::setTestNow(Cake\Chronos\MutableDate::now());
-}
-
-if (class_exists('PHPUnit_Runner_Version')) {
-    class_alias('PHPUnit_Framework_TestResult', 'PHPUnit\Framework\TestResult');
-    class_alias('PHPUnit_Framework_Error', 'PHPUnit\Framework\Error\Error');
-    class_alias('PHPUnit_Framework_Error_Warning', 'PHPUnit\Framework\Error\Warning');
-    class_alias('PHPUnit_Framework_Error_Notice', 'PHPUnit\Framework\Error\Notice');
-    class_alias('PHPUnit_Framework_ExpectationFailedException', 'PHPUnit\Framework\ExpectationFailedException');
-}

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @var \App\View\AppView $this
+ */
+?>
+<?php
 echo $this->element('design/header');
 ?>
 
@@ -7,7 +12,7 @@ echo $this->element('Aros/links');
 ?>
 
 <?php
-echo $this->Form->create('User', array('url' => array('plugin' => 'acl', 'controller' => 'aros', 'action' => 'admin_users')));
+echo $this->Form->create('User');
 echo __d('acl', 'name');
 echo '<br/>';
 echo $this->Form->input($user_display_field, array('label' => false, 'div' => false));
@@ -23,7 +28,7 @@ echo '<br/>';
             $headers = array($this->Paginator->sort($user_display_field, __d('acl', 'name')));
 
             foreach ($roles as $role) {
-                $headers[] = $role[$role_model_name][$role_display_field];
+                $headers[] = $role->$role_display_field;
                 $column_count++;
             }
 
@@ -34,21 +39,21 @@ echo '<br/>';
         </tr>
         <?php
         foreach ($users as $user) {
-            $style = isset($user['Aro']) ? '' : ' class="line_warning"';
+            $style = isset($user['aro']) ? '' : ' class="line_warning"';
 
             echo '<tr' . $style . '>';
-            echo '  <td>' . $user[$user_model_name][$user_display_field] . '</td>';
+            echo '  <td>' . $user->$user_display_field . '</td>';
 
             foreach ($roles as $role) {
-                if (isset($user['Aro']) && $role[$role_model_name][$role_pk_name] == $user[$user_model_name][$role_fk_name]) {
-                    echo '  <td>' . $this->Html->image('/acl/img/design/tick.png') . '</td>';
+                if (isset($user['aro']) && $role->$role_pk_name == $user->$role_fk_name) {
+                    echo '  <td>' . $this->Html->image('/acl_manager/img/design/tick.png') . '</td>';
                 } else {
                     $title = __d('acl', 'Update the user role');
-                    echo '  <td>' . $this->Html->link($this->Html->image('/acl/img/design/tick_disabled.png'), '/admin/acl/aros/update_user_role/user:' . $user[$user_model_name][$user_pk_name] . '/role:' . $role[$role_model_name][$role_pk_name], array('title' => $title, 'alt' => $title, 'escape' => false)) . '</td>';
+                    echo '  <td>' . $this->Html->link($this->Html->image('/acl_manager/img/design/tick_disabled.png'), ['action' => 'updateUserRole', $user->$user_pk_name, $role->$role_pk_name], array('title' => $title, 'alt' => $title, 'escape' => false)) . '</td>';
                 }
             }
 
-            //echo '  <td>' . (isset($user['Aro']) ? $this->Html->image('/acl/img/design/tick.png') : $this->Html->image('/acl/img/design/cross.png')) . '</td>';
+            //echo '  <td>' . (isset($user['aro']) ? $this->Html->image('/acl_manager/img/design/tick.png') : $this->Html->image('/acl_manager/img/design/cross.png')) . '</td>';
 
             echo '</tr>';
         }

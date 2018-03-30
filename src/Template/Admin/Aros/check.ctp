@@ -12,7 +12,7 @@ if (count($missing_aros['roles']) > 0) {
 
     $list = array();
     foreach ($missing_aros['roles'] as $missing_aro) {
-        $list[] = $missing_aro[$role_model_name][$role_display_field];
+        $list[] = $missing_aro->{$role_display_field};
     }
 
     echo $this->Html->nestedList($list);
@@ -25,7 +25,7 @@ if (count($missing_aros['users']) > 0) {
 
     $list = array();
     foreach ($missing_aros['users'] as $missing_aro) {
-        $list[] = $missing_aro[$user_model_name][$user_display_field];
+        $list[] = $missing_aro->{$user_display_field};
     }
 
     echo $this->Html->nestedList($list);
@@ -35,7 +35,7 @@ if (count($missing_aros['users']) > 0) {
 <?php
 if (count($missing_aros['roles']) > 0 || count($missing_aros['users']) > 0) {
     echo '<p>';
-    echo $this->Html->link(__d('acl', 'Build'), '/admin/acl/aros/check/run');
+    echo $this->Html->link(__d('acl', 'Build'), '/admin/acl_manager/aros/check/run');
     echo '</p>';
 } else {
     echo '<p>';

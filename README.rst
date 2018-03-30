@@ -1,4 +1,4 @@
-ACL Plugin for CakePHP 2.0
+ACL Plugin for CakePHP 3.x
 ===========================
 
 Version: 2.3.0
@@ -16,8 +16,17 @@ can be found on the following links :
 - http://book.cakephp.org/2.0/en/tutorials-and-examples/simple-acl-controlled-application/simple-acl-controlled-application.html
 
 
+Requirements
+-----------------
+
+
+- CakePHP 3.x
+- Acl (see https://github.com/cakephp/acl)
+- CakeJs (see https://github.com/oldskool/cakephp-js)
+
+
 Installation
--------------
+-----------------
 
 
 - Download the plugin and put it in your 'app/Plugin' or 'plugins' folder

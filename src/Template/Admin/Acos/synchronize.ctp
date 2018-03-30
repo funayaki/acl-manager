@@ -70,11 +70,11 @@ if ($run) {
         echo '</p>';
 
         echo '<p>';
-        echo $this->Html->link($this->Html->image('/acl/img/design/sync.png') . ' ' . __d('acl', 'Synchronize'), '/admin/acl/acos/synchronize/run', array('escape' => false));
+        echo $this->Html->link($this->Html->image('/acl_manager/img/design/sync.png') . ' ' . __d('acl', 'Synchronize'), '/admin/acl_manager/acos/synchronize/run', array('escape' => false));
         echo '</p>';
     } else {
         echo '<p style="font-style:italic;">';
-        echo $this->Html->image('/acl/img/design/tick.png') . ' ' . __d('acl', 'The ACO datatable is already synchronized');
+        echo $this->Html->image('/acl_manager/img/design/tick.png') . ' ' . __d('acl', 'The ACO datatable is already synchronized');
         echo '</p>';
     }
 }

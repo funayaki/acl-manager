@@ -7,7 +7,9 @@
  */
 namespace Controller;
 
-class AclController extends AclAppController
+use AclManager\Controller\AppController;
+
+class AclController extends AppController
 {
 
     var $name = 'Acl';
