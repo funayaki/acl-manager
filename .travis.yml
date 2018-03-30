@@ -1,0 +1,45 @@
+language: php
+
+dist: trusty
+
+env:
+  matrix:
+    - DB=mysql db_dsn='mysql://root:@127.0.0.1/test_myapp'
+    - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/test_myapp'
+    - DB=sqlite db_dsn='sqlite:///:memory:'
+  global:
+    - DEFAULT=1
+
+services:
+  - postgresql
+  - mysql
+
+sudo: false
+
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+
+matrix:
+  fast_finish: true
+
+  include:
+    - php: 7.0
+      env: PHPCS=1
+
+before_install:
+  - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE test_myapp;'; fi
+  - if [ $DB = 'pgsql' ]; then psql -c 'CREATE DATABASE test_myapp;' -U postgres; fi
+
+before_script:
+  - if [[ $PHPCS = 1 ]]; then composer require cakephp/cakephp-codesniffer:^3.0; fi
+  - if [[ $PHPCS != 1 ]]; then composer install; fi
+  - if [[ $PHPCS != 1 ]]; then composer require phpunit/phpunit:"^5.7|^6.0"; fi
+
+script:
+  - if [[ $PHPCS != 1 ]]; then vendor/bin/phpunit; fi
+  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests ./config ./webroot; fi
+
+notifications:
+  email: false
