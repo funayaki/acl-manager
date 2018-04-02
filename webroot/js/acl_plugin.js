@@ -7,7 +7,7 @@ function init_register_user_controller_toggle_right(app_root_url, user_id, plugi
     app_root_url = ensure_ends_with(app_root_url, "/");
     var plugin_param = (plugin == null || plugin == "" || typeof(plugin) == "undefined") ? '' : "/plugin:" + plugin;
 
-    var url = app_root_url + "admin/acl/aros/get_user_controller_permission/" + user_id + plugin_param + "/controller:" + controller;
+    var url = app_root_url + "admin/acl_manager/aros/get_user_controller_permission/" + user_id + plugin_param + "/controller:" + controller;
 
     $.ajax({
         url: url,
@@ -50,12 +50,12 @@ function register_user_toggle_right(start_granted, app_root_url, span_id, user_i
     var plugin_param = (plugin == null || plugin == "" || typeof(plugin) == "undefined") ? '' : "/plugin:" + plugin;
 
     if (start_granted) {
-        var url1 = app_root_url + "admin/acl/aros/deny_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
-        var url2 = app_root_url + "admin/acl/aros/grant_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url1 = app_root_url + "admin/acl_manager/aros/deny_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url2 = app_root_url + "admin/acl_manager/aros/grant_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
     }
     else {
-        var url1 = app_root_url + "admin/acl/aros/grant_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
-        var url2 = app_root_url + "admin/acl/aros/deny_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url1 = app_root_url + "admin/acl_manager/aros/grant_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url2 = app_root_url + "admin/acl_manager/aros/deny_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
     }
 
     $("#" + span_id).toggle(function () {
@@ -95,7 +95,7 @@ function init_register_role_controller_toggle_right(app_root_url, role_id, plugi
     app_root_url = ensure_ends_with(app_root_url, "/");
     var plugin_param = (plugin == null || plugin == "" || typeof(plugin) == "undefined") ? '' : "/plugin:" + plugin;
 
-    var url = app_root_url + "admin/acl/aros/get_role_controller_permission/" + role_id + plugin_param + "/controller:" + controller;
+    var url = app_root_url + "admin/acl_manager/aros/get_role_controller_permission/" + role_id + plugin_param + "/controller:" + controller;
 
     $.ajax({
         url: url,
@@ -139,12 +139,12 @@ function register_role_toggle_right(start_granted, app_root_url, span_id, role_i
     var plugin_param = (plugin == null || plugin == "" || typeof(plugin) == "undefined") ? '' : "/plugin:" + plugin;
 
     if (start_granted) {
-        var url1 = app_root_url + "admin/acl/aros/deny_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
-        var url2 = app_root_url + "admin/acl/aros/grant_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url1 = app_root_url + "admin/acl_manager/aros/deny_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url2 = app_root_url + "admin/acl_manager/aros/grant_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
     }
     else {
-        var url1 = app_root_url + "admin/acl/aros/grant_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
-        var url2 = app_root_url + "admin/acl/aros/deny_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url1 = app_root_url + "admin/acl_manager/aros/grant_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url2 = app_root_url + "admin/acl_manager/aros/deny_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
     }
 
     $("#" + span_id).toggle(function () {
