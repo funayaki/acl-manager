@@ -23,7 +23,10 @@ use Cake\ORM\TableRegistry;
  */
 class ArosController extends AppController
 {
-    var $helpers = array('CakeJs.Js' => array('Jquery'));
+    var $helpers = [
+        'CakeJs.JqueryEngine',
+        'CakeJs.Js' => ['Jquery']
+    ];
 
     var $paginate = array(
         'limit' => 20,
@@ -298,9 +301,9 @@ class ArosController extends AppController
                 foreach ($roles as $role) {
                     $aro_node = $this->Acl->Aro->node($role);
                     if (!empty($aro_node)) {
-                        $aco_node = $this->Acl->Aco->node('controllers/' . $full_action);
+                        $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $full_action);
                         if (!empty($aco_node)) {
-                            $authorized = $this->Acl->check($role, 'controllers/' . $full_action);
+                            $authorized = $this->Acl->check($role, $this->AclReflector->getRootNodeName() . '/' . $full_action);
 
                             $permissions[$role[Configure:: read('acl.aro.role.model')][$this->_get_role_primary_key_name()]] = $authorized ? 1 : 0;
                         }
@@ -393,9 +396,9 @@ class ArosController extends AppController
 
                     if ($controller_name != 'App') {
                         if (!isset($this->params['named']['ajax'])) {
-                            $aco_node = $this->Acl->Aco->node('controllers/' . $full_action);
+                            $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $full_action);
                             if (!empty($aco_node)) {
-                                $authorized = $this->Acl->check($user, 'controllers/' . $full_action);
+                                $authorized = $this->Acl->check($user, $this->AclReflector->getRootNodeName() . '/' . $full_action);
 
                                 $permissions[$user->{$this->_get_user_primary_key_name()}] = $authorized ? 1 : 0;
                             }
@@ -484,7 +487,7 @@ class ArosController extends AppController
             $this->Flash->error(sprintf(__d('acl', "The role '%s' does not exist in the ARO table"), $role_id)); // TODO FIX options
         } else {
             //Allow to everything
-            $this->Acl->allow($ref, 'controllers'); // TODO FIX ME
+            $this->Acl->allow($ref, $this->AclReflector->getRootNodeName()); // TODO FIX ME
         }
 
         $this->_return_to_referer();
@@ -505,7 +508,7 @@ class ArosController extends AppController
             $this->Flash->error(sprintf(__d('acl', "The role '%s' does not exist in the ARO table"), $role_id)); // TODO FIX options
         } else {
             //Deny everything
-            $this->Acl->deny($ref, 'controllers');
+            $this->Acl->deny($ref, $this->AclReflector->getRootNodeName());
         }
 
         $this->_return_to_referer();
@@ -530,9 +533,9 @@ class ArosController extends AppController
                 $aco_path .= empty($aco_path) ? $controller_name : '/' . $controller_name;
                 $aco_path .= '/' . $action_name;
 
-                $aco_node = $this->Acl->Aco->node('controllers/' . $aco_path);
+                $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $aco_path);
                 if (!empty($aco_node)) {
-                    $authorized = $this->Acl->check($role_data, 'controllers/' . $aco_path);
+                    $authorized = $this->Acl->check($role_data, $this->AclReflector->getRootNodeName() . '/' . $aco_path);
                     $role_controller_permissions[$action_name] = $authorized;
                 } else {
                     $role_controller_permissions[$action_name] = -1;
@@ -629,9 +632,9 @@ class ArosController extends AppController
                 $aco_path .= empty($aco_path) ? $controller_name : '/' . $controller_name;
                 $aco_path .= '/' . $action_name;
 
-                $aco_node = $this->Acl->Aco->node('controllers/' . $aco_path);
+                $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $aco_path);
                 if (!empty($aco_node)) {
-                    $authorized = $this->Acl->check($user_data, 'controllers/' . $aco_path);
+                    $authorized = $this->Acl->check($user_data, $this->AclReflector->getRootNodeName() . '/' . $aco_path);
                     $user_controller_permissions[$action_name] = $authorized;
                 } else {
                     $user_controller_permissions[$action_name] = -1;
@@ -664,7 +667,7 @@ class ArosController extends AppController
          */
         $aro_node = $this->Acl->Aro->node($user);
         if (!empty($aro_node)) {
-            $aco_node = $this->Acl->Aco->node('controllers/' . $aco_path);
+            $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $aco_path);
             if (!empty($aco_node)) {
                 if (!$this->AclManager->save_permission($aro_node, $aco_path, 'grant')) {
                     $this->set('acl_error', true);
@@ -701,7 +704,7 @@ class ArosController extends AppController
          */
         $aro_node = $this->Acl->Aro->node($user);
         if (!empty($aro_node)) {
-            $aco_node = $this->Acl->Aco->node('controllers/' . $aco_path);
+            $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $aco_path);
             if (!empty($aco_node)) {
                 if (!$this->AclManager->save_permission($aro_node, $aco_path, 'deny')) {
                     $this->set('acl_error', true);
