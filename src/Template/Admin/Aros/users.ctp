@@ -3,23 +3,30 @@
  * @var \App\View\AppView $this
  */
 ?>
-<?php
-echo $this->element('design/header');
-?>
+<nav class="large-3 medium-4 columns" id="actions-sidebar">
+    <ul class="side-nav">
+        <li class="heading"><?= __('Actions') ?></li>
+    </ul>
+</nav>
+<div class="aros users large-9 medium-8 columns content">
 
-<?php
-echo $this->element('Aros/links');
-?>
+    <?php
+    echo $this->element('design/header');
+    ?>
 
-<?php
-echo $this->Form->create('User');
-echo __d('acl', 'name');
-echo '<br/>';
-echo $this->Form->input($user_display_field, array('label' => false, 'div' => false));
-echo ' ';
-echo $this->Form->end(array('label' => __d('acl', 'filter'), 'div' => false));
-echo '<br/>';
-?>
+    <?php
+    echo $this->element('Aros/links');
+    ?>
+
+    <?php
+    echo $this->Form->create('User');
+    echo __d('acl', 'name');
+    echo '<br/>';
+    echo $this->Form->input($user_display_field, array('label' => false, 'div' => false));
+    echo ' ';
+    echo $this->Form->end(array('label' => __d('acl', 'filter'), 'div' => false));
+    echo '<br/>';
+    ?>
     <table border="0" cellpadding="5" cellspacing="2">
         <tr>
             <?php
@@ -70,18 +77,20 @@ echo '<br/>';
     </table>
 
 
-<?php
-if ($missing_aro) {
+    <?php
+    if ($missing_aro) {
+        ?>
+        <div style="margin-top:20px">
+
+            <p class="warning"><?php echo __d('acl', 'Some users AROS are missing. Click on a role to assign one to a user.') ?></p>
+
+        </div>
+    <?php
+    }
     ?>
-    <div style="margin-top:20px">
 
-        <p class="warning"><?php echo __d('acl', 'Some users AROS are missing. Click on a role to assign one to a user.') ?></p>
+    <?php
+    echo $this->element('design/footer');
+    ?>
 
-    </div>
-<?php
-}
-?>
-
-<?php
-echo $this->element('design/footer');
-?>
+</div>

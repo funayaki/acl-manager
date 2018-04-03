@@ -1,13 +1,25 @@
 <?php
+/**
+ * @var \App\View\AppView $this
+ */
+
 echo $this->Html->script('/acl_manager/js/jquery');
 echo $this->Html->script('/acl_manager/js/acl_plugin');
-
-echo $this->element('design/header');
 ?>
+<nav class="large-3 medium-4 columns" id="actions-sidebar">
+    <ul class="side-nav">
+        <li class="heading"><?= __('Actions') ?></li>
+    </ul>
+</nav>
+<div class="aros ajax_user_permissions large-9 medium-8 columns content">
 
-<?php
-echo $this->element('Aros/links');
-?>
+    <?php
+    echo $this->element('design/header');
+    ?>
+
+    <?php
+    echo $this->element('Aros/links');
+    ?>
 
     <h1><?php echo __d('acl', 'User') . ' : ' . $user->$user_display_field; ?></h1>
 
@@ -35,16 +47,16 @@ echo $this->element('Aros/links');
 
     <h2><?php echo __d('acl', 'Permissions'); ?></h2>
 
-<?php
-if ($user_has_specific_permissions) {
-    echo '<div class="separator"></div>';
-    echo $this->Html->image('/acl_manager/img/design/bulb24.png') . __d('acl', 'This user has specific permissions');
-    echo ' (';
-    echo $this->Html->link($this->Html->image('/acl_manager/img/design/cross2.png', array('style' => 'vertical-align:middle;')) . ' ' . __d('acl', 'Clear'), '/admin/acl_manager/aros/clear_user_specific_permissions/' . $user->$user_pk_name, array('confirm' => __d('acl', 'Are you sure you want to clear the permissions specific to this user ?'), 'escape' => false));
-    echo ')';
-    echo '<div class="separator"></div>';
-}
-?>
+    <?php
+    if ($user_has_specific_permissions) {
+        echo '<div class="separator"></div>';
+        echo $this->Html->image('/acl_manager/img/design/bulb24.png') . __d('acl', 'This user has specific permissions');
+        echo ' (';
+        echo $this->Html->link($this->Html->image('/acl_manager/img/design/cross2.png', array('style' => 'vertical-align:middle;')) . ' ' . __d('acl', 'Clear'), '/admin/acl_manager/aros/clear_user_specific_permissions/' . $user->$user_pk_name, array('confirm' => __d('acl', 'Are you sure you want to clear the permissions specific to this user ?'), 'escape' => false));
+        echo ')';
+        echo '<div class="separator"></div>';
+    }
+    ?>
 
     <table border="0" cellpadding="5" cellspacing="2">
         <tr>
@@ -142,11 +154,14 @@ if ($user_has_specific_permissions) {
         }
         ?>
     </table>
-<?php
-echo $this->Html->image('/acl_manager/img/design/tick.png') . ' ' . __d('acl', 'authorized');
-echo '&nbsp;&nbsp;&nbsp;';
-echo $this->Html->image('/acl_manager/img/design/cross.png') . ' ' . __d('acl', 'blocked');
-?>
-<?php
-echo $this->element('design/footer');
-?>
+    <?php
+    echo $this->Html->image('/acl_manager/img/design/tick.png') . ' ' . __d('acl', 'authorized');
+    echo '&nbsp;&nbsp;&nbsp;';
+    echo $this->Html->image('/acl_manager/img/design/cross.png') . ' ' . __d('acl', 'blocked');
+    ?>
+
+    <?php
+    echo $this->element('design/footer');
+    ?>
+
+</div>

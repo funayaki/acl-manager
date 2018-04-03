@@ -1,13 +1,25 @@
 <?php
+/**
+ * @var \App\View\AppView $this
+ */
+
 echo $this->Html->script('/acl_manager/js/jquery');
 echo $this->Html->script('/acl_manager/js/acl_plugin');
-
-echo $this->element('design/header');
 ?>
+<nav class="large-3 medium-4 columns" id="actions-sidebar">
+    <ul class="side-nav">
+        <li class="heading"><?= __('Actions') ?></li>
+    </ul>
+</nav>
+<div class="aros role_permissions large-9 medium-8 columns content">
 
-<?php
-echo $this->element('Aros/links');
-?>
+    <?php
+    echo $this->element('design/header');
+    ?>
+
+    <?php
+    echo $this->element('Aros/links');
+    ?>
 
     <div class="separator"></div>
 
@@ -201,7 +213,8 @@ echo $this->element('Aros/links');
 
     </div>
 
+    <?php
+    echo $this->element('design/footer');
+    ?>
 
-<?php
-echo $this->element('design/footer');
-?>
+</div>
