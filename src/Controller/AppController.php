@@ -81,10 +81,14 @@ class AppController extends BaseController
 
     protected function _check_files_updates()
     {
-        if ($this->request->params['controller'] != 'acos'
-            || ($this->request->params['action'] != 'admin_synchronize' &&
-                $this->request->params['action'] != 'admin_prune_acos' &&
-                $this->request->params['action'] != 'admin_build_acl')
+        $prefix = $this->request->getParam('prefix');
+        $controller = $this->request->getParam('controller');
+        $action = $this->request->getParam('action');
+
+        if ($controller != 'Acos'
+            || (($prefix == 'admin' && $action == 'synchronize') ||
+                ($prefix == 'admin' && $action == 'prune_acos') ||
+                ($prefix == 'admin' && $action == 'build_acl'))
         ) {
             if ($this->AclManager->controller_hash_file_is_out_of_sync()) {
                 $missing_aco_nodes = $this->AclManager->get_missing_acos();
