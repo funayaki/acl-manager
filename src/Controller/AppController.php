@@ -86,7 +86,7 @@ class AppController extends BaseController
         $action = $this->request->getParam('action');
 
         if ($controller != 'Acos'
-            || (($prefix == 'admin' && $action == 'synchronize') ||
+            || !(($prefix == 'admin' && $action == 'synchronize') ||
                 ($prefix == 'admin' && $action == 'prune_acos') ||
                 ($prefix == 'admin' && $action == 'build_acl'))
         ) {
@@ -108,7 +108,7 @@ class AppController extends BaseController
                 $this->set('missing_aco_nodes', $missing_aco_nodes);
 
                 if ($has_updates) {
-                    $this->render('/Acos/admin_has_updates');
+                    $this->render('/Admin/Acos/has_updates');
                     $this->response->send();
                     $this->AclManager->update_controllers_hash_file();
                     die();
