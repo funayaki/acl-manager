@@ -25,7 +25,7 @@ echo $this->element('design/header', array('no_acl_links' => true));
 
         echo '<p>';
         echo __d('acl', 'You can update the ACOs by clicking on the following link') . ' : ';
-        echo $this->Html->link(__d('acl', 'Synchronize ACOs'), '/admin/acl/acos/synchronize/run');
+        echo $this->Html->link(__d('acl', 'Synchronize ACOs'), '/admin/acl_manager/acos/synchronize/run');
         echo '</p>';
 
         echo '<p>';
