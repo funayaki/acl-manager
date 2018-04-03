@@ -1,6 +1,18 @@
 <?php
-echo $this->element('design/header', array('no_acl_links' => true));
+/**
+ * @var \App\View\AppView $this
+ */
 ?>
+<nav class="large-3 medium-4 columns" id="actions-sidebar">
+    <ul class="side-nav">
+        <li class="heading"><?= __('Actions') ?></li>
+    </ul>
+</nav>
+<div class="acos has_updates large-9 medium-8 columns content">
+
+    <?php
+    echo $this->element('design/header', array('no_acl_links' => true));
+    ?>
 
     <div class="error">
 
@@ -35,6 +47,8 @@ echo $this->element('design/header', array('no_acl_links' => true));
 
     </div>
 
-<?php
-echo $this->element('design/footer');
-?>
+    <?php
+    echo $this->element('design/footer');
+    ?>
+
+</div>
