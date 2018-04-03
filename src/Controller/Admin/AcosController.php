@@ -13,11 +13,18 @@ use AclManager\Controller\AppController;
 
 class AcosController extends AppController
 {
+
+    /**
+     *
+     */
     public function index()
     {
 
     }
 
+    /**
+     * @param null $run
+     */
     public function emptyAcos($run = null)
     {
         /*
@@ -47,6 +54,9 @@ class AcosController extends AppController
         }
     }
 
+    /**
+     * @param null $run
+     */
     public function buildAcl($run = null)
     {
         if (isset($run)) {
@@ -63,6 +73,9 @@ class AcosController extends AppController
         }
     }
 
+    /**
+     * @param null $run
+     */
     public function pruneAcos($run = null)
     {
         if (isset($run)) {
@@ -79,6 +92,9 @@ class AcosController extends AppController
         }
     }
 
+    /**
+     * @param null $run
+     */
     public function synchronize($run = null)
     {
         if (isset($run)) {
