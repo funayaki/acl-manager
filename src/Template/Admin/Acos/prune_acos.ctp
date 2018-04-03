@@ -51,11 +51,11 @@
             echo '</p>';
 
             echo '<p>';
-            echo $this->Html->link($this->Html->image('/acl/img/design/clean.png') . ' ' . __d('acl', 'Prune'), '/admin/acl/acos/prune_acos/run', array('escape' => false));
+            echo $this->Html->link($this->Html->image('/acl_manager/img/design/clean.png') . ' ' . __d('acl', 'Prune'), '/admin/acl_manager/acos/prune_acos/run', array('escape' => false));
             echo '</p>';
         } else {
             echo '<p style="font-style:italic;">';
-            echo $this->Html->image('/acl/img/design/tick.png') . ' ' . __d('acl', 'There is no ACO node to delete');
+            echo $this->Html->image('/acl_manager/img/design/tick.png') . ' ' . __d('acl', 'There is no ACO node to delete');
             echo '</p>';
         }
     }
