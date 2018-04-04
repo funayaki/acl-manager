@@ -62,21 +62,19 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
     <div>
 
         <table border="0" cellpadding="5" cellspacing="2">
-            <tr>
-                <?php
+            <?php
 
-                $column_count = 1;
+            $column_count = 1;
 
-                $headers = array(__d('acl', 'action'));
+            $headers = array(__d('acl', 'action'));
 
-                foreach ($roles as $role) {
-                    $headers[] = $role->$role_display_field;
-                    $column_count++;
-                }
+            foreach ($roles as $role) {
+                $headers[] = $role->$role_display_field;
+                $column_count++;
+            }
 
-                echo $this->Html->tableHeaders($headers);
-                ?>
-            </tr>
+            echo $this->Html->tableHeaders($headers);
+            ?>
 
             <?php
             $js_init_done = array();

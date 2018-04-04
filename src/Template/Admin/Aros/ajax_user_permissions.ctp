@@ -59,16 +59,14 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
     ?>
 
     <table border="0" cellpadding="5" cellspacing="2">
-        <tr>
-            <?php
+        <?php
 
-            $column_count = 1;
+        $column_count = 1;
 
-            $headers = array(__d('acl', 'action'), __d('acl', 'authorization'));
+        $headers = array(__d('acl', 'action'), __d('acl', 'authorization'));
 
-            echo $this->Html->tableHeaders($headers);
-            ?>
-        </tr>
+        echo $this->Html->tableHeaders($headers);
+        ?>
 
         <?php
         $js_init_done = array();

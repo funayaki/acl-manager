@@ -42,15 +42,13 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
         echo '<br/>';
         ?>
         <table border="0" cellpadding="5" cellspacing="2">
-            <tr>
-                <?php
-                $column_count = 1;
+            <?php
+            $column_count = 1;
 
-                $headers = array($this->Paginator->sort(__d('acl', 'user'), $user_display_field));
+            $headers = array($this->Paginator->sort(__d('acl', 'user'), $user_display_field));
 
-                echo $this->Html->tableHeaders($headers);
-                ?>
-            </tr>
+            echo $this->Html->tableHeaders($headers);
+            ?>
             <?php
             foreach ($users as $user) {
                 echo '<tr>';
@@ -118,16 +116,14 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
         ?>
 
         <table border="0" cellpadding="5" cellspacing="2">
-            <tr>
-                <?php
+            <?php
 
-                $column_count = 1;
+            $column_count = 1;
 
-                $headers = array(__d('acl', 'action'), __d('acl', 'authorization'));
+            $headers = array(__d('acl', 'action'), __d('acl', 'authorization'));
 
-                echo $this->Html->tableHeaders($headers);
-                ?>
-            </tr>
+            echo $this->Html->tableHeaders($headers);
+            ?>
 
             <?php
             $previous_ctrl_name = '';
