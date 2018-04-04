@@ -55,9 +55,9 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
                 echo '  <td>' . $user->$user_display_field . '</td>';
                 $title = __d('acl', 'Manage user specific rights');
 
-                $link = '/admin/acl_manager/aros/user_permissions/' . $user->$user_pk_name;
+                $link = ['action' => 'user_permissions', $user->$user_pk_name];
                 if (Configure:: read('acl.gui.users_permissions.ajax') === true) {
-                    $link .= '/ajax:true';
+                    $link [] = 'ajax';
                 }
 
                 echo '  <td>' . $this->Html->link($this->Html->image('/acl_manager/img/design/lock.png'), $link, array('alt' => $title, 'title' => $title, 'escape' => false)) . '</td>';

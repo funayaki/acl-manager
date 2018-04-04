@@ -273,7 +273,7 @@ class ArosController extends AppController
         $this->set('permissions', $permissions);
     }
 
-    public function userPermissions($user_id = null)
+    public function userPermissions($user_id = null, $ajax = false)
     {
         $user_model_name = Configure:: read('acl.aro.user.model');
         $role_model_name = Configure:: read('acl.aro.role.model');
@@ -353,7 +353,7 @@ class ArosController extends AppController
             $this->set('actions', $actions);
             $this->set('permissions', $permissions);
 
-            if (isset($this->params['named']['ajax'])) {
+            if ($ajax) {
                 $this->render('ajax_user_permissions');
             }
         }
