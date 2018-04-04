@@ -77,129 +77,56 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
             ?>
 
             <?php
-            $previous_ctrl_name = '';
-            $i = 0;
+            $previousAction = '';
+            foreach ($actions as $action) {
+                $aliases = explode('/', $action);
+                $method = array_pop($aliases);
+                $controller = array_pop($aliases);
 
-            if (isset($actions['app']) && is_array($actions['app'])) {
-                foreach ($actions['app'] as $controller_name => $ctrl_infos) {
-                    if ($previous_ctrl_name != $controller_name) {
-                        $previous_ctrl_name = $controller_name;
+                $previousAlias = explode('/', $previousAction);
+                $previousMethod = array_pop($previousAlias);
+                $previousController = array_pop($previousAlias);
 
-                        $color = ($i % 2 == 0) ? 'color1' : 'color2';
-                    }
-
-                    foreach ($ctrl_infos as $ctrl_info) {
-                        echo '<tr class="' . $color . '">
-	    		';
-
-                        echo '<td>' . $controller_name . '->' . $ctrl_info['name'] . '</td>';
-
-                        foreach ($roles as $role) {
-                            echo '<td>';
-                            echo '<span id="right__' . $role->$role_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '">';
-
-                            if (isset($ctrl_info['permissions'][$role->$role_pk_name])) {
-                                if ($ctrl_info['permissions'][$role->$role_pk_name] == 1) {
-                                    $this->Js->buffer('register_role_toggle_right(true, "' . $this->Url->build('/') . '", "right__' . $role->$role_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $role->$role_pk_name . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
-
-                                    echo $this->Html->image('/acl_manager/img/design/tick.png', array('class' => 'pointer'));
-                                } else {
-                                    $this->Js->buffer('register_role_toggle_right(false, "' . $this->Url->build('/') . '", "right__' . $role->$role_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $role->$role_pk_name . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
-
-                                    echo $this->Html->image('/acl_manager/img/design/cross.png', array('class' => 'pointer'));
-                                }
-                            } else {
-                                /*
-                                 * The right of the action for the role is unknown
-                                 */
-                                echo $this->Html->image('/acl_manager/img/design/important16.png', array('title' => __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.')));
-                            }
-
-                            echo '</span>';
-
-                            echo ' ';
-                            echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => 'right__' . $role->$role_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '_spinner', 'style' => 'display:none;'));
-
-                            echo '</td>';
-                        }
-
-                        echo '</tr>
-		    	';
-                    }
-
-                    $i++;
+                if ($previousAlias != $aliases) {
+                    echo '<tr class="title"><td colspan="' . $column_count . '">' . implode('/', $aliases) . '</td></tr>';
                 }
-            }
-            ?>
-            <?php
-            if (isset($actions['plugin']) && is_array($actions['plugin'])) {
-                foreach ($actions['plugin'] as $plugin_name => $plugin_ctrler_infos) {
-//    	    debug($plugin_name);
-//    	    debug($plugin_ctrler_infos);
 
-                    $color = null;
+                echo '<tr>';
 
-                    echo '<tr class="title"><td colspan="' . $column_count . '">' . __d('acl', 'Plugin') . ' ' . $plugin_name . '</td></tr>';
+                echo '<td>' . $controller . '->' . $method . '</td>';
 
-                    $i = 0;
-                    foreach ($plugin_ctrler_infos as $plugin_ctrler_name => $plugin_methods) {
-                        //debug($plugin_ctrler_name);
-                        //echo '<tr style="background-color:#888888;color:#ffffff;"><td colspan="' . $column_count . '">' . $plugin_ctrler_name . '</td></tr>';
+                foreach ($roles as $role) {
+                    echo '<td>';
+                    echo '<span id="right__' . $role->$role_pk_name . '_' . $controller . '_' . $method . '">';
 
-                        if ($previous_ctrl_name != $plugin_ctrler_name) {
-                            $previous_ctrl_name = $plugin_ctrler_name;
+                    if (isset($permissions[$action][$role->$role_pk_name])) {
+                        if ($permissions[$action][$role->$role_pk_name] == 1) {
+                            $this->Js->buffer('register_role_toggle_right(true, "' . $this->Url->build('/') . '", "right__' . $role->$role_pk_name . '_' . $controller . '_' . $method . '", "' . $role->$role_pk_name . '", "", "' . $controller . '", "' . $method . '")');
 
-                            $color = ($i % 2 == 0) ? 'color1' : 'color2';
+                            echo $this->Html->image('/acl_manager/img/design/tick.png', array('class' => 'pointer'));
+                        } else {
+                            $this->Js->buffer('register_role_toggle_right(false, "' . $this->Url->build('/') . '", "right__' . $role->$role_pk_name . '_' . $controller . '_' . $method . '", "' . $role->$role_pk_name . '", "", "' . $controller . '", "' . $method . '")');
+
+                            echo $this->Html->image('/acl_manager/img/design/cross.png', array('class' => 'pointer'));
                         }
-
-
-                        foreach ($plugin_methods as $method) {
-                            echo '<tr class="' . $color . '">
-    	            ';
-
-                            echo '<td>' . $plugin_ctrler_name . '->' . $method['name'] . '</td>';
-                            //debug($method['name']);
-
-                            foreach ($roles as $role) {
-                                echo '<td>';
-                                echo '<span id="right_' . $plugin_name . '_' . $role->$role_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '">';
-
-                                if (isset($ctrl_info['permissions'][$role->$role_pk_name])) {
-                                    if ($method['permissions'][$role->$role_pk_name] == 1) {
-                                        //echo '<td>' . $this->Html->link($this->Html->image('/acl_manager/img/design/tick.png'), '/admin/acl_manager/aros/deny_role_permission/' . $role->$role_pk_name . '/plugin:' . $plugin_name . '/controller:' . $plugin_ctrler_name . '/action:' . $method['name'], array('escape' => false)) . '</td>';
-
-                                        $this->Js->buffer('register_role_toggle_right(true, "' . $this->Url->build('/') . '", "right_' . $plugin_name . '_' . $role->$role_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $role->$role_pk_name . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
-
-                                        echo $this->Html->image('/acl_manager/img/design/tick.png', array('class' => 'pointer'));
-                                    } else {
-                                        //echo '<td>' . $this->Html->link($this->Html->image('/acl_manager/img/design/cross.png'), '/admin/acl_manager/aros/grant_role_permission/' . $role->$role_pk_name . '/plugin:' . $plugin_name .'/controller:' . $plugin_ctrler_name . '/action:' . $method['name'], array('escape' => false)) . '</td>';
-
-                                        $this->Js->buffer('register_role_toggle_right(false, "' . $this->Url->build('/') . '", "right_' . $plugin_name . '_' . $role->$role_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $role->$role_pk_name . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
-
-                                        echo $this->Html->image('/acl_manager/img/design/cross.png', array('class' => 'pointer'));
-                                    }
-                                } else {
-                                    /*
-                                     * The right of the action for the role is unknown
-                                     */
-                                    echo $this->Html->image('/acl_manager/img/design/important16.png', array('title' => __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.')));
-                                }
-
-                                echo '</span>';
-
-                                echo ' ';
-                                echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => 'right_' . $plugin_name . '_' . $role->$role_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '_spinner', 'style' => 'display:none;'));
-
-                                echo '</td>';
-                            }
-
-                            echo '</tr>
-    	            ';
-                        }
-
-                        $i++;
+                    } else {
+                        /*
+                         * The right of the action for the role is unknown
+                         */
+                        echo $this->Html->image('/acl_manager/img/design/important16.png', array('title' => __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.')));
                     }
+
+                    echo '</span>';
+
+                    echo ' ';
+                    echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => 'right__' . $role->$role_pk_name . '_' . $controller . '_' . $method . '_spinner', 'style' => 'display:none;'));
+
+                    echo '</td>';
                 }
+
+                echo '</tr>';
+
+                $previousAction = $action;
             }
             ?>
         </table>

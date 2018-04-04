@@ -277,54 +277,29 @@ class ArosController extends AppController
 
         $actions = $this->AclReflector->get_all_actions();
 
-        $permissions = array();
-        $methods = array();
-
+        $permissions = [];
         foreach ($actions as $full_action) {
-            if (Configure::version() < '2.7') {
-                $arr = Text::tokenize($full_action, '/');
-            } else {
-                $arr = CakeText::tokenize($full_action, '/');
-            }
+            foreach ($roles as $role) {
+                $aro_node = $this->Acl->Aro->node($role);
+                if (!empty($aro_node)) {
+                    $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $full_action);
+                    if (!empty($aco_node)) {
+                        $authorized = $this->Acl->check($role, $this->AclReflector->getRootNodeName() . '/' . $full_action);
 
-            if (count($arr) == 2) {
-                $plugin_name = null;
-                $controller_name = $arr[0];
-                $action = $arr[1];
-            } elseif (count($arr) == 3) {
-                $plugin_name = $arr[0];
-                $controller_name = $arr[1];
-                $action = $arr[2];
-            }
-
-            if ($controller_name != 'App') {
-                foreach ($roles as $role) {
-                    $aro_node = $this->Acl->Aro->node($role);
-                    if (!empty($aro_node)) {
-                        $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $full_action);
-                        if (!empty($aco_node)) {
-                            $authorized = $this->Acl->check($role, $this->AclReflector->getRootNodeName() . '/' . $full_action);
-
-                            $permissions[$role[Configure:: read('acl.aro.role.model')][$this->_get_role_primary_key_name()]] = $authorized ? 1 : 0;
-                        }
-                    } else {
-                        /*
-                         * No check could be done as the ARO is missing
-                         */
-                        $permissions[$role[Configure:: read('acl.aro.role.model')][$this->_get_role_primary_key_name()]] = -1;
+                        $permissions[$full_action][$role->{$this->_get_role_primary_key_name()}] = $authorized ? 1 : 0;
                     }
-                }
-
-                if (isset($plugin_name)) {
-                    $methods['plugin'][$plugin_name][$controller_name][] = array('name' => $action, 'permissions' => $permissions);
                 } else {
-                    $methods['app'][$controller_name][] = array('name' => $action, 'permissions' => $permissions);
+                    /*
+                     * No check could be done as the ARO is missing
+                     */
+                    $permissions[$full_action][$role->{$this->_get_role_primary_key_name()}] = -1;
                 }
             }
         }
 
         $this->set('roles', $roles);
-        $this->set('actions', $methods);
+        $this->set('actions', $actions);
+        $this->set('permissions', $permissions);
     }
 
     public function userPermissions($user_id = null)
