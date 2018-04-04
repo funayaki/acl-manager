@@ -118,7 +118,7 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
         <table border="0" cellpadding="5" cellspacing="2">
             <?php
 
-            $column_count = 1;
+            $column_count = 2;
 
             $headers = array(__d('acl', 'action'), __d('acl', 'authorization'));
 
@@ -126,100 +126,49 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
             ?>
 
             <?php
-            $previous_ctrl_name = '';
+            $previousAction = '';
+            foreach ($actions as $action) {
+                $aliases = explode('/', $action);
+                $method = array_pop($aliases);
+                $controller = array_pop($aliases);
 
-            //debug($actions);
-            if (isset($actions['app']) && is_array($actions['app'])) {
-                foreach ($actions['app'] as $controller_name => $ctrl_infos) {
-                    if ($previous_ctrl_name != $controller_name) {
-                        $previous_ctrl_name = $controller_name;
+                $previousAlias = explode('/', $previousAction);
+                $previousMethod = array_pop($previousAlias);
+                $previousController = array_pop($previousAlias);
 
-                        $color = (isset($color) && $color == 'color1') ? 'color2' : 'color1';
-                    }
-
-                    foreach ($ctrl_infos as $ctrl_info) {
-                        //debug($ctrl_info);
-
-                        echo '<tr class="' . $color . '">
-        		';
-
-                        echo '<td>' . $controller_name . '->' . $ctrl_info['name'] . '</td>';
-
-                        echo '<td>';
-                        echo '<span id="right__' . $user->$user_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '">';
-
-                        if ($ctrl_info['permissions'][$user->$user_pk_name] == 1) {
-                            $this->Js->buffer('register_user_toggle_right(true, "' . $this->Url->build('/') . '", "right__' . $user->$user_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $user->$user_pk_name . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
-
-                            echo $this->Html->image('/acl_manager/img/design/tick.png', array('class' => 'pointer'));
-                        } elseif ($ctrl_info['permissions'][$user->$user_pk_name] == 0) {
-                            $this->Js->buffer('register_user_toggle_right(false, "' . $this->Url->build('/') . '", "right__' . $user->$user_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '", "' . $user->$user_pk_name . '", "", "' . $controller_name . '", "' . $ctrl_info['name'] . '")');
-
-                            echo $this->Html->image('/acl_manager/img/design/cross.png', array('class' => 'pointer'));
-                        } elseif ($ctrl_info['permissions'][$user->$user_pk_name] == -1) {
-                            echo $this->Html->image('/acl_manager/img/design/important16.png');
-                        }
-
-                        echo '</span>';
-
-                        echo ' ';
-                        echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => 'right__' . $user->$user_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '_spinner', 'style' => 'display:none;'));
-
-                        echo '</td>';
-                        echo '</tr>
-    	    	';
-                    }
+                if ($previousAlias != $aliases) {
+                    echo '<tr class="title"><td colspan="' . $column_count . '">' . implode('/', $aliases) . '</td></tr>';
                 }
-            }
-            ?>
-            <?php
-            if (isset($actions['plugin']) && is_array($actions['plugin'])) {
-                foreach ($actions['plugin'] as $plugin_name => $plugin_ctrler_infos) {
-                    echo '<tr class="title"><td colspan="2">' . __d('acl', 'Plugin') . ' ' . $plugin_name . '</td></tr>
-    	    ';
 
-                    foreach ($plugin_ctrler_infos as $plugin_ctrler_name => $plugin_methods) {
-                        if ($previous_ctrl_name != $plugin_ctrler_name) {
-                            $previous_ctrl_name = $plugin_ctrler_name;
+                echo '<tr>';
 
-                            $color = (isset($color) && $color == 'color1') ? 'color2' : 'color1';
-                        }
+                echo '<td>' . $controller . '->' . $method . '</td>';
 
-                        foreach ($plugin_methods as $method) {
-                            echo '<tr class="' . $color . '">
-    	            ';
+                $spanId = 'right__' . $user->$user_pk_name . '_' . implode('_', explode('/', $action));
 
-                            echo '<td>' . $plugin_ctrler_name . '->' . $method['name'] . '</td>';
-                            //debug($method['name']);
+                echo '<td>';
+                echo '<span id="' . $spanId . '">';
 
-                            echo '<td>';
-                            echo '<span id="right_' . $plugin_name . '_' . $user->$user_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '">';
+                if ($permissions[$action][$user->$user_pk_name] == 1) {
+                    $this->Js->buffer('register_user_toggle_right(true, "' . $this->Url->build('/') . '", "' . $spanId . '", "' . $user->$user_pk_name . '", "' . $action . '")');
 
-                            if ($method['permissions'][$user->$user_pk_name] == 1) {
-                                $this->Js->buffer('register_user_toggle_right(true, "' . $this->Url->build('/') . '", "right_' . $plugin_name . '_' . $user->$user_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $user->$user_pk_name . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
+                    echo $this->Html->image('/acl_manager/img/design/tick.png', array('class' => 'pointer'));
+                } elseif ($permissions[$action][$user->$user_pk_name] == 0) {
+                    $this->Js->buffer('register_user_toggle_right(false, "' . $this->Url->build('/') . '", "' . $spanId . '", "' . $user->$user_pk_name . '", "' . $action . '")');
 
-                                echo $this->Html->image('/acl_manager/img/design/tick.png', array('class' => 'pointer'));
-                            } elseif ($method['permissions'][$user->$user_pk_name] == 0) {
-                                $this->Js->buffer('register_user_toggle_right(false, "' . $this->Url->build('/') . '", "right_' . $plugin_name . '_' . $user->$user_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '", "' . $user->$user_pk_name . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . $method['name'] . '")');
-
-                                echo $this->Html->image('/acl_manager/img/design/cross.png', array('class' => 'pointer'));
-                            } elseif ($method['permissions'][$user->$user_pk_name] == -1) {
-                                echo $this->Html->image('/acl_manager/img/design/important16.png');
-                            } else {
-                                echo '?';
-                            }
-
-                            echo '</span>';
-
-                            echo ' ';
-                            echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => 'right_' . $plugin_name . '_' . $user->$user_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '_spinner', 'style' => 'display:none;'));
-
-                            echo '</td>';
-                            echo '</tr>
-    	            ';
-                        }
-                    }
+                    echo $this->Html->image('/acl_manager/img/design/cross.png', array('class' => 'pointer'));
+                } elseif ($permissions[$action][$user->$user_pk_name] == -1) {
+                    echo $this->Html->image('/acl_manager/img/design/important16.png');
                 }
+
+                echo '</span>';
+
+                echo ' ';
+                echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => '' . $spanId . '_spinner', 'style' => 'display:none;'));
+
+                echo '</td>';
+                echo '</tr>';
+                $previousAction = $action;
             }
             ?>
         </table>

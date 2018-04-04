@@ -311,7 +311,6 @@ class ArosController extends AppController
             $user = $this->{$user_model_name}->get($user_id);
 
             $permissions = array();
-            $methods = array();
 
             /*
              * Check if the user exists in the ARO table
@@ -324,36 +323,12 @@ class ArosController extends AppController
                 $actions = $this->AclReflector->get_all_actions();
 
                 foreach ($actions as $full_action) {
-                    if (Configure::version() < '2.7') {
-                        $arr = Text::tokenize($full_action, '/');
-                    } else {
-                        $arr = CakeText::tokenize($full_action, '/');
-                    }
+                    if (!isset($this->params['named']['ajax'])) {
+                        $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $full_action);
+                        if (!empty($aco_node)) {
+                            $authorized = $this->Acl->check($user, $this->AclReflector->getRootNodeName() . '/' . $full_action);
 
-                    if (count($arr) == 2) {
-                        $plugin_name = null;
-                        $controller_name = $arr[0];
-                        $action = $arr[1];
-                    } elseif (count($arr) == 3) {
-                        $plugin_name = $arr[0];
-                        $controller_name = $arr[1];
-                        $action = $arr[2];
-                    }
-
-                    if ($controller_name != 'App') {
-                        if (!isset($this->params['named']['ajax'])) {
-                            $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $full_action);
-                            if (!empty($aco_node)) {
-                                $authorized = $this->Acl->check($user, $this->AclReflector->getRootNodeName() . '/' . $full_action);
-
-                                $permissions[$user->{$this->_get_user_primary_key_name()}] = $authorized ? 1 : 0;
-                            }
-                        }
-
-                        if (isset($plugin_name)) {
-                            $methods['plugin'][$plugin_name][$controller_name][] = array('name' => $action, 'permissions' => $permissions);
-                        } else {
-                            $methods['app'][$controller_name][] = array('name' => $action, 'permissions' => $permissions);
+                            $permissions[$full_action][$user->{$this->_get_user_primary_key_name()}] = $authorized ? 1 : 0;
                         }
                     }
                 }
@@ -375,7 +350,8 @@ class ArosController extends AppController
 
             $this->set('user', $user);
             $this->set('roles', $roles);
-            $this->set('actions', $methods);
+            $this->set('actions', $actions);
+            $this->set('permissions', $permissions);
 
             if (isset($this->params['named']['ajax'])) {
                 $this->render('ajax_user_permissions');
@@ -492,7 +468,7 @@ class ArosController extends AppController
             //$this->set('acl_error_aro', true);
         }
 
-        if ($this->request->is('ajax')) {
+        if ($this->request->is('Ajax')) {
             Configure::write('debug', 0); //-> to disable printing of generation time preventing correct JSON parsing
             echo json_encode($role_controller_permissions);
             $this->autoRender = false;
@@ -503,18 +479,16 @@ class ArosController extends AppController
 
     public function grantRolePermission($role_id)
     {
-        $role = $this->{Configure:: read('acl.aro.role.model')};
-
-        $role->id = $role_id;
-
-        $aco_path = $this->_get_passed_aco_path();
+        $args = func_get_args();
+        array_shift($args);
+        $aco_path = implode('/', $args);
 
         /*
          * Check if the role exists in the ARO table
          */
-        $aro_node = $this->Acl->Aro->node($role);
+        $aro_node = $this->{Configure:: read('acl.aro.role.model')}->get($role_id);
         if (!empty($aro_node)) {
-            if (!$this->AclManager->save_permission($aro_node, $aco_path, 'grant')) {
+            if (!$this->Acl->allow($aro_node, $aco_path)) {
                 $this->set('acl_error', true);
             }
         } else {
@@ -523,9 +497,9 @@ class ArosController extends AppController
         }
 
         $this->set('role_id', $role_id);
-        $this->_set_aco_variables();
+        $this->set('action', $aco_path);
 
-        if ($this->request->is('ajax')) {
+        if ($this->request->is('Ajax')) {
             $this->render('ajax_role_granted');
         } else {
             $this->_return_to_referer();
@@ -534,15 +508,16 @@ class ArosController extends AppController
 
     public function denyRolePermission($role_id)
     {
-        $role = $this->{Configure:: read('acl.aro.role.model')};
+        $args = func_get_args();
+        array_shift($args);
+        $aco_path = implode('/', $args);
 
-        $role->id = $role_id;
-
-        $aco_path = $this->_get_passed_aco_path();
-
-        $aro_node = $this->Acl->Aro->node($role);
+        /*
+         * Check if the role exists in the ARO table
+         */
+        $aro_node = $this->{Configure:: read('acl.aro.role.model')}->get($role_id);
         if (!empty($aro_node)) {
-            if (!$this->AclManager->save_permission($aro_node, $aco_path, 'deny')) {
+            if (!$this->Acl->deny($aro_node, $aco_path)) {
                 $this->set('acl_error', true);
             }
         } else {
@@ -550,9 +525,9 @@ class ArosController extends AppController
         }
 
         $this->set('role_id', $role_id);
-        $this->_set_aco_variables();
+        $this->set('action', $aco_path);
 
-        if ($this->request->is('ajax')) {
+        if ($this->request->is('Ajax')) {
             $this->render('ajax_role_denied');
         } else {
             $this->_return_to_referer();
@@ -591,7 +566,7 @@ class ArosController extends AppController
             //$this->set('acl_error_aro', true);
         }
 
-        if ($this->request->is('ajax')) {
+        if ($this->request->is('Ajax')) {
             Configure::write('debug', 0); //-> to disable printing of generation time preventing correct JSON parsing
             echo json_encode($user_controller_permissions);
             $this->autoRender = false;
@@ -602,35 +577,26 @@ class ArosController extends AppController
 
     public function grantUserPermission($user_id)
     {
-        $user = $this->{Configure:: read('acl.aro.user.model')};
-
-        $user->id = $user_id;
-
-        $aco_path = $this->_get_passed_aco_path();
+        $args = func_get_args();
+        array_shift($args);
+        $aco_path = implode('/', $args);
 
         /*
          * Check if the user exists in the ARO table
          */
-        $aro_node = $this->Acl->Aro->node($user);
+        $aro_node = $this->{Configure:: read('acl.aro.user.model')}->get($user_id);
         if (!empty($aro_node)) {
-            $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $aco_path);
-            if (!empty($aco_node)) {
-                if (!$this->AclManager->save_permission($aro_node, $aco_path, 'grant')) {
-                    $this->set('acl_error', true);
-                }
-            } else {
+            if (!$this->Acl->allow($aro_node, $aco_path)) {
                 $this->set('acl_error', true);
-                $this->set('acl_error_aco', true);
             }
         } else {
             $this->set('acl_error', true);
-            $this->set('acl_error_aro', true);
         }
 
         $this->set('user_id', $user_id);
-        $this->_set_aco_variables();
+        $this->set('action', $aco_path);
 
-        if ($this->request->is('ajax')) {
+        if ($this->request->is('Ajax')) {
             $this->render('ajax_user_granted');
         } else {
             $this->_return_to_referer();
@@ -639,35 +605,26 @@ class ArosController extends AppController
 
     public function denyUserPermission($user_id)
     {
-        $user = $this->{Configure:: read('acl.aro.user.model')};
-
-        $user->id = $user_id;
-
-        $aco_path = $this->_get_passed_aco_path();
+        $args = func_get_args();
+        array_shift($args);
+        $aco_path = implode('/', $args);
 
         /*
          * Check if the user exists in the ARO table
          */
-        $aro_node = $this->Acl->Aro->node($user);
+        $aro_node = $this->{Configure:: read('acl.aro.user.model')}->get($user_id);
         if (!empty($aro_node)) {
-            $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $aco_path);
-            if (!empty($aco_node)) {
-                if (!$this->AclManager->save_permission($aro_node, $aco_path, 'deny')) {
-                    $this->set('acl_error', true);
-                }
-            } else {
+            if (!$this->Acl->deny($aro_node, $aco_path)) {
                 $this->set('acl_error', true);
-                $this->set('acl_error_aco', true);
             }
         } else {
             $this->set('acl_error', true);
-            $this->set('acl_error_aro', true);
         }
 
         $this->set('user_id', $user_id);
-        $this->_set_aco_variables();
+        $this->set('action', $aco_path);
 
-        if ($this->request->is('ajax')) {
+        if ($this->request->is('Ajax')) {
             $this->render('ajax_user_denied');
         } else {
             $this->_return_to_referer();

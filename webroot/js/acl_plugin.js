@@ -45,46 +45,45 @@ function init_register_user_controller_toggle_right(app_root_url, user_id, plugi
         }
     });
 }
-function register_user_toggle_right(start_granted, app_root_url, span_id, user_id, plugin, controller, action) {
+function register_user_toggle_right(start_granted, app_root_url, span_id, user_id, action) {
     app_root_url = ensure_ends_with(app_root_url, "/");
-    var plugin_param = (plugin == null || plugin == "" || typeof(plugin) == "undefined") ? '' : "/plugin:" + plugin;
 
     if (start_granted) {
-        var url1 = app_root_url + "admin/acl_manager/aros/deny_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
-        var url2 = app_root_url + "admin/acl_manager/aros/grant_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url1 = app_root_url + "admin/acl_manager/aros/deny_user_permission/" + user_id + '/' + action;
+        var url2 = app_root_url + "admin/acl_manager/aros/grant_user_permission/" + user_id + '/' + action;
     }
     else {
-        var url1 = app_root_url + "admin/acl_manager/aros/grant_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
-        var url2 = app_root_url + "admin/acl_manager/aros/deny_user_permission/" + user_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url1 = app_root_url + "admin/acl_manager/aros/grant_user_permission/" + user_id + '/' + action;
+        var url2 = app_root_url + "admin/acl_manager/aros/deny_user_permission/" + user_id + '/' + action;
     }
 
     $("#" + span_id).toggle(function () {
-            $("#right_" + plugin + "_" + user_id + "_" + controller + "_" + action + "_spinner").show();
+            $("#" + span_id + "_spinner").show();
 
             $.ajax({
                 url: url1,
                 dataType: "html",
                 cache: false,
                 success: function (data, textStatus) {
-                    $("#right_" + plugin + "_" + user_id + "_" + controller + "_" + action).html(data);
+                    $("#" + span_id).html(data);
                 },
                 complete: function () {
-                    $("#right_" + plugin + "_" + user_id + "_" + controller + "_" + action + "_spinner").hide();
+                    $("#" + span_id + "_spinner").hide();
                 }
             });
         },
         function () {
-            $("#right_" + plugin + "_" + user_id + "_" + controller + "_" + action + "_spinner").show();
+            $("#" + span_id + "_spinner").show();
 
             $.ajax({
                 url: url2,
                 dataType: "html",
                 cache: false,
                 success: function (data, textStatus) {
-                    $("#right_" + plugin + "_" + user_id + "_" + controller + "_" + action).html(data);
+                    $("#" + span_id).html(data);
                 },
                 complete: function () {
-                    $("#right_" + plugin + "_" + user_id + "_" + controller + "_" + action + "_spinner").hide();
+                    $("#" + span_id + "_spinner").hide();
                 }
             });
         });
@@ -134,46 +133,45 @@ function init_register_role_controller_toggle_right(app_root_url, role_id, plugi
     });
 }
 
-function register_role_toggle_right(start_granted, app_root_url, span_id, role_id, plugin, controller, action) {
+function register_role_toggle_right(start_granted, app_root_url, span_id, role_id, action) {
     app_root_url = ensure_ends_with(app_root_url, "/");
-    var plugin_param = (plugin == null || plugin == "" || typeof(plugin) == "undefined") ? '' : "/plugin:" + plugin;
 
     if (start_granted) {
-        var url1 = app_root_url + "admin/acl_manager/aros/deny_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
-        var url2 = app_root_url + "admin/acl_manager/aros/grant_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url1 = app_root_url + "admin/acl_manager/aros/deny_role_permission/" + role_id + '/' + action;
+        var url2 = app_root_url + "admin/acl_manager/aros/grant_role_permission/" + role_id + '/' + action;
     }
     else {
-        var url1 = app_root_url + "admin/acl_manager/aros/grant_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
-        var url2 = app_root_url + "admin/acl_manager/aros/deny_role_permission/" + role_id + plugin_param + "/controller:" + controller + "/action:" + action;
+        var url1 = app_root_url + "admin/acl_manager/aros/grant_role_permission/" + role_id + '/' + action;
+        var url2 = app_root_url + "admin/acl_manager/aros/deny_role_permission/" + role_id + '/' + action;
     }
 
     $("#" + span_id).toggle(function () {
-            $("#right_" + plugin + "_" + role_id + "_" + controller + "_" + action + "_spinner").show();
+            $("#" + span_id + "_spinner").show();
 
             $.ajax({
                 url: url1,
                 dataType: "html",
                 cache: false,
                 success: function (data, textStatus) {
-                    $("#right_" + plugin + "_" + role_id + "_" + controller + "_" + action).html(data);
+                    $("#" + span_id).html(data);
                 },
                 complete: function () {
-                    $("#right_" + plugin + "_" + role_id + "_" + controller + "_" + action + "_spinner").hide();
+                    $("#" + span_id + "_spinner").hide();
                 }
             });
         },
         function () {
-            $("#right_" + plugin + "_" + role_id + "_" + controller + "_" + action + "_spinner").show();
+            $("#" + span_id + "_spinner").show();
 
             $.ajax({
                 url: url2,
                 dataType: "html",
                 cache: false,
                 success: function (data, textStatus) {
-                    $("#right_" + plugin + "_" + role_id + "_" + controller + "_" + action).html(data);
+                    $("#" + span_id).html(data);
                 },
                 complete: function () {
-                    $("#right_" + plugin + "_" + role_id + "_" + controller + "_" + action + "_spinner").hide();
+                    $("#" + span_id + "_spinner").hide();
                 }
             });
         });

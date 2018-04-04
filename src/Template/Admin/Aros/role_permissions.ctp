@@ -96,16 +96,17 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
                 echo '<td>' . $controller . '->' . $method . '</td>';
 
                 foreach ($roles as $role) {
+                    $spanId = 'right__' . $role->$role_pk_name . '_' . implode('_', explode('/', $action));
                     echo '<td>';
-                    echo '<span id="right__' . $role->$role_pk_name . '_' . $controller . '_' . $method . '">';
+                    echo '<span id="' . $spanId . '">';
 
                     if (isset($permissions[$action][$role->$role_pk_name])) {
                         if ($permissions[$action][$role->$role_pk_name] == 1) {
-                            $this->Js->buffer('register_role_toggle_right(true, "' . $this->Url->build('/') . '", "right__' . $role->$role_pk_name . '_' . $controller . '_' . $method . '", "' . $role->$role_pk_name . '", "", "' . $controller . '", "' . $method . '")');
+                            $this->Js->buffer('register_role_toggle_right(true, "' . $this->Url->build('/') . '", "' . $spanId . '", "' . $role->$role_pk_name . '", "' . $action . '")');
 
                             echo $this->Html->image('/acl_manager/img/design/tick.png', array('class' => 'pointer'));
                         } else {
-                            $this->Js->buffer('register_role_toggle_right(false, "' . $this->Url->build('/') . '", "right__' . $role->$role_pk_name . '_' . $controller . '_' . $method . '", "' . $role->$role_pk_name . '", "", "' . $controller . '", "' . $method . '")');
+                            $this->Js->buffer('register_role_toggle_right(false, "' . $this->Url->build('/') . '", "' . $spanId . '", "' . $role->$role_pk_name . '", "' . $action . '")');
 
                             echo $this->Html->image('/acl_manager/img/design/cross.png', array('class' => 'pointer'));
                         }
@@ -119,7 +120,7 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
                     echo '</span>';
 
                     echo ' ';
-                    echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => 'right__' . $role->$role_pk_name . '_' . $controller . '_' . $method . '_spinner', 'style' => 'display:none;'));
+                    echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => '' . $spanId . '_spinner', 'style' => 'display:none;'));
 
                     echo '</td>';
                 }
