@@ -8,9 +8,11 @@ namespace AclManager\Controller\Component;
 
 use Acl\Controller\Component\AclComponent;
 use Cake\Controller\Component;
+use Cake\Core\Configure;
 use Cake\Filesystem\File;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 /**
  * @property AclReflectorComponent AclReflector
@@ -18,19 +20,22 @@ use Cake\Utility\Hash;
  */
 class AclManagerComponent extends Component
 {
-    var $components = array('Auth', 'Acl.Acl', 'Acl.AclReflector', 'Session');
+    var $components = array('Auth', 'Acl.Acl', 'AclManager.AclReflector', 'Session');
 
     /**
-     * @var AclAppController
+     * @var null
      */
     private $controller = null;
+
+    /**
+     * @var
+     */
     private $controllers_hash_file;
 
     /****************************************************************************************/
 
     public function initialize(array $config)
     {
-//        $this->controller = $controller; // TODO FIX ME
         $this->controllers_hash_file = CACHE . 'persistent' . DS . 'controllers_hashes.txt';
     }
 
@@ -176,9 +181,9 @@ class AclManagerComponent extends Component
 
         $current_controller_hashes = array();
 
-        foreach ($controllers as $controller) {
-            $ctler_file = new File($controller['file']);
-            $current_controller_hashes[$controller['name']] = $ctler_file->md5();
+        foreach ($controllers as $path => $controller) {
+            $ctler_file = new File($path);
+            $current_controller_hashes[$path] = $ctler_file->md5();
         }
 
         return $current_controller_hashes;
@@ -190,57 +195,8 @@ class AclManagerComponent extends Component
     function get_missing_acos()
     {
         $actions = $this->AclReflector->get_all_actions();
-        $controllers = $this->AclReflector->get_all_controllers();
-
-        $actions_aco_paths = array();
-        foreach ($actions as $action) {
-            $action_infos = explode('/', $action);
-            $controller = $action_infos[count($action_infos) - 2];
-
-            if ($controller != 'App') {
-                $actions_aco_paths[] = 'controllers/' . $action;
-            }
-        }
-        foreach ($controllers as $controller) {
-            if ($controller['name'] != 'App') {
-                $actions_aco_paths[] = 'controllers/' . $controller['name'];
-            }
-        }
-        $actions_aco_paths[] = 'controllers';
-
-        $aco = $this->Acl->Aco;
-
-        $acos = array();
-
-        $query = $aco->node('controllers');
-
-        if (!$query) {
-            $controllers_aco = $aco->newEntity(['parent_id' => null, 'model' => null, 'alias' => 'controllers']);
-            $aco->save($controllers_aco); // TODO FIX ME
-        } else {
-            $controllers_aco = $query->first();
-        }
-
-        if (!empty($controllers_aco)) {
-            $acos = $aco->find('children', ['for' => $controllers_aco->id])->toArray();
-            array_unshift($acos, $controllers_aco);
-        }
-
-        $existing_aco_paths = array();
-        foreach ($acos as $aco_node) {
-            $path_nodes = $aco->find('path', ['for' => $aco_node->id]);
-            $path = '';
-            foreach ($path_nodes as $path_node) {
-                $path .= '/' . $path_node->alias;
-            }
-
-            $path = substr($path, 1);
-            $existing_aco_paths[] = $path;
-        }
-
-        $missing_acos = array_diff($actions_aco_paths, $existing_aco_paths);
-
-        return $missing_acos;
+        $existingActions = $this->getActionsInDatabase();
+        return array_diff($actions, $existingActions);
     }
 
     /**
@@ -249,17 +205,18 @@ class AclManagerComponent extends Component
      */
     public function create_acos()
     {
-        $aco = $this->Acl->Aco;
-
-        $log = array();
+        $Aco = $this->Acl->Aco;
 
         $missing_acos = $this->get_missing_acos();
 
+        $rootNode = $this->getRootNode();
+
+        $log = array();
         foreach ($missing_acos as $missing_aco) {
             $aco_path_parts = explode('/', $missing_aco);
 
             $path = '';
-            $parent_node = null;
+            $parent_node = $rootNode;
 
             foreach ($aco_path_parts as $aco_path_part) {
                 $path .= '/' . $aco_path_part;
@@ -269,7 +226,7 @@ class AclManagerComponent extends Component
                 /*
                  * Check if the ACO exists
                  */
-                $query = $aco->node($look_path);
+                $query = $Aco->node($look_path);
 
                 if (empty($query)) {
                     $parent_id = null;
@@ -280,8 +237,8 @@ class AclManagerComponent extends Component
 
                     $alias = substr($path, strrpos($path, '/') + 1);
 
-                    $new_node = $aco->newEntity(['parent_id' => $parent_id, 'model' => null, 'alias' => $alias]);
-                    if ($aco->save($new_node)) {
+                    $new_node = $Aco->newEntity(['parent_id' => $parent_id, 'model' => null, 'alias' => $alias]);
+                    if ($Aco->save($new_node)) {
                         $log[] = sprintf(__d('acl', "Aco node '%s' created"), $look_path);
 
                         /*
@@ -321,60 +278,14 @@ class AclManagerComponent extends Component
         }
     }
 
+    /**
+     * @return array
+     */
     public function get_acos_to_prune()
     {
         $actions = $this->AclReflector->get_all_actions();
-        $controllers = $this->AclReflector->get_all_controllers();
-        $plugins = $this->AclReflector->get_all_plugins_names();
-
-        $actions_aco_paths = array();
-        foreach ($actions as $action) {
-            $actions_aco_paths[] = 'controllers/' . $action;
-        }
-        foreach ($controllers as $controller) {
-            $actions_aco_paths[] = 'controllers/' . $controller['name'];
-        }
-        foreach ($plugins as $plugin) {
-            $actions_aco_paths[] = 'controllers/' . $plugin;
-        }
-        $actions_aco_paths[] = 'controllers';
-
-        $aco = $this->Acl->Aco;
-
-        $acos = array();
-
-        $query = $aco->node('controllers');
-
-        if (!$query) {
-            $controllers_aco = $aco->newEntity(['parent_id' => null, 'model' => null, 'alias' => 'controllers']);
-            $aco->save($controllers_aco); // TODO FIX ME
-        } else {
-            $controllers_aco = $query->first();
-        }
-
-        if (!empty($controllers_aco)) {
-            $acos = $aco->find('children', ['for' => $controllers_aco->id])->toArray();
-            array_unshift($acos, $controllers_aco);
-        }
-
-        $existing_aco_paths = array();
-        foreach ($acos as $aco_node) {
-            $path_nodes = $aco->find('path', ['for' => $aco_node->id]);
-
-            if (count($path_nodes) > 1 && $path_nodes[0]->alias == 'controllers') {
-                $path = '';
-                foreach ($path_nodes as $path_node) {
-                    $path .= '/' . $path_node->alias;
-                }
-
-                $path = substr($path, 1);
-                $existing_aco_paths[] = $path;
-            }
-        }
-
-        $paths_to_prune = array_diff($existing_aco_paths, $actions_aco_paths);
-
-        return $paths_to_prune;
+        $existingActions = $this->getActionsInDatabase();
+        return array_diff($existingActions, $actions);
     }
 
     /**
@@ -384,20 +295,18 @@ class AclManagerComponent extends Component
      */
     public function prune_acos()
     {
-        $aco = $this->Acl->Aco;
+        $Aco = $this->Acl->Aco;
 
-        $log = array();
+        $log = [];
 
         $paths_to_prune = $this->get_acos_to_prune();
 
         foreach ($paths_to_prune as $path_to_prune) {
-            $node = $aco->node($path_to_prune);
-            if (!empty($node)) {
-                /*
-                 * First element is the last part in path
-                 * -> we delete it
-                 */
-                if ($aco->delete($node[0]['Aco']['id'])) {
+            $query = $Aco->node($path_to_prune);
+            if (!empty($query)) {
+                $node = $query->first();
+                $entity = $Aco->get($node->id);
+                if ($Aco->delete($entity)) {
                     $log[] = sprintf(__d('acl', "Aco node '%s' has been deleted"), $path_to_prune);
                 } else {
                     $log[] = '<span class="error">' . sprintf(__d('acl', "Aco node '%s' could not be deleted"), $path_to_prune) . '</span>';
@@ -417,7 +326,7 @@ class AclManagerComponent extends Component
     public function save_permission($aro_nodes, $aco_path, $permission_type)
     {
         if (isset($aro_nodes[0])) {
-            $aco_path = 'controllers/' . $aco_path;
+            $aco_path = $this->AclReflector->getRootNodeName() . '/' . $aco_path;
 
             $pk_name = 'id';
             if ($aro_nodes[0]['Aro']['model'] == Configure:: read('acl.aro.role.model')) {
@@ -617,7 +526,7 @@ class AclManagerComponent extends Component
                 $permissions = array();
 
                 foreach ($actions as $action) {
-                    $aco_path = 'controllers/' . $action;
+                    $aco_path = $this->AclReflector->getRootNodeName() . '/' . $action;
 
                     $permissions[$aco_path] = $this->Acl->check($user, $aco_path);
                 }
@@ -625,5 +534,74 @@ class AclManagerComponent extends Component
                 $this->Session->write('Alaxos.Acl.permissions', $permissions);
             }
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getActionsInDatabase()
+    {
+        $Aco = $this->Acl->Aco;
+
+        $rootNode = $this->getRootNode();
+
+        $acos = $Aco->find('children', ['for' => $rootNode->id, 'order' => 'lft'])->find('threaded');
+
+        return array_map(function ($path) {
+            return ltrim($path, '/');
+        }, $this->_buildActionListInDatabase($acos));
+    }
+
+    /**
+     * @param $acos
+     * @param string $path
+     * @return array
+     */
+    protected function _buildActionListInDatabase($acos, $path = '')
+    {
+        $actions = [];
+        foreach ($acos as $aco) {
+            $currentPath = $path . '/' . $aco->alias;
+            if ($aco->children) {
+                $childActions = $this->_buildActionListInDatabase($aco->children, $currentPath);
+                foreach ($childActions as $childAction) {
+                    $actions[] = $childAction;
+                }
+            } else {
+                if ($this->_isActionNode($aco)) {
+                    $actions[] = $currentPath;
+                }
+            }
+        }
+        return $actions;
+    }
+
+    /**
+     * @param $node
+     * @return bool
+     */
+    protected function _isActionNode($node)
+    {
+        return !($node->children || Inflector::camelize($node->alias) == $node->alias);
+    }
+
+    /**
+     * Check root node for existence, create it if it doesn't exist.
+     *
+     * @return mixed
+     */
+    public function getRootNode()
+    {
+        $Aco = $this->Acl->Aco;
+
+        $query = $Aco->node($this->AclReflector->getRootNodeName());
+        if (!$query) {
+            $rootNode = $Aco->newEntity(['parent_id' => null, 'model' => null, 'alias' => $this->AclReflector->getRootNodeName()]);
+            $Aco->save($rootNode);
+        } else {
+            $rootNode = $query->first();
+        }
+
+        return $rootNode;
     }
 }

@@ -57,6 +57,22 @@ class AcosControllerTest extends IntegrationTestCase
     }
 
     /**
+     * Test emptyAcosWithDryRun method
+     *
+     * @return void
+     */
+    public function testEmptyAcosWithDryRun()
+    {
+        $this->setUpAuth();
+
+        $this->get('/admin/acl_manager/acos/empty_acos');
+        $this->assertResponseOk();
+
+        $Acos = TableRegistry::get('Acos');
+        $this->assertNotEquals(0, $Acos->find()->count());
+    }
+
+    /**
      * Test emptyAcos method
      *
      * @return void
@@ -65,11 +81,11 @@ class AcosControllerTest extends IntegrationTestCase
     {
         $this->setUpAuth();
 
-        $this->get('/admin/acl_manager/acos/empty_acos');
-        $this->assertResponseOk();
-
         $this->get('/admin/acl_manager/acos/empty_acos/run');
         $this->assertResponseOk();
+
+        $Acos = TableRegistry::get('Acos');
+        $this->assertEquals(0, $Acos->find()->count());
     }
 
     /**

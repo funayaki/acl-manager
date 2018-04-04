@@ -62,129 +62,65 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
     <div>
 
         <table border="0" cellpadding="5" cellspacing="2">
-            <tr>
-                <?php
+            <?php
 
-                $column_count = 1;
+            $column_count = 1;
 
-                $headers = array(__d('acl', 'action'));
+            $headers = array(__d('acl', 'action'));
+
+            foreach ($roles as $role) {
+                $headers[] = $role->$role_display_field;
+                $column_count++;
+            }
+
+            echo $this->Html->tableHeaders($headers);
+            ?>
+
+            <?php
+            $js_init_done = [];
+            $previousAction = '';
+            foreach ($actions as $action) {
+                $aliases = explode('/', $action);
+                $method = array_pop($aliases);
+                $controller = array_pop($aliases);
+
+                $previousAlias = explode('/', $previousAction);
+                $previousMethod = array_pop($previousAlias);
+                $previousController = array_pop($previousAlias);
+
+                if ($previousAlias != $aliases) {
+                    echo '<tr class="title"><td colspan="' . $column_count . '">' . implode('/', $aliases) . '</td></tr>';
+                }
+
+                echo '<tr>';
+
+                echo '<td>' . $controller . '->' . $method . '</td>';
 
                 foreach ($roles as $role) {
-                    $headers[] = $role->$role_display_field;
-                    $column_count++;
-                }
+                    echo '<td>';
+                    echo '<span id="right_' . implode('/', $aliases) . '_' . $role->$role_pk_name . '_' . $controller . '_' . $method . '">';
 
-                echo $this->Html->tableHeaders($headers);
-                ?>
-            </tr>
+                    /*
+                    * The right of the action for the role must still be loaded
+                    */
+                    echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('title' => __d('acl', 'loading')));
 
-            <?php
-            $js_init_done = array();
-            $previous_ctrl_name = '';
-            $i = 0;
-
-            if (isset($actions['app']) && is_array($actions['app'])) {
-                foreach ($actions['app'] as $controller_name => $ctrl_infos) {
-                    if ($previous_ctrl_name != $controller_name) {
-                        $previous_ctrl_name = $controller_name;
-
-                        $color = ($i % 2 == 0) ? 'color1' : 'color2';
+                    if (!in_array(implode('/', $aliases) . "_" . $controller . '_' . $role->$role_pk_name, $js_init_done)) {
+                        $js_init_done[] = implode('/', $aliases) . "_" . $controller . '_' . $role->$role_pk_name;
+                        $this->Js->buffer('init_register_role_controller_toggle_right("' . $this->Url->build('/', true) . '", "' . $role->$role_pk_name . '", "' . implode('/', $aliases) . '", "' . $controller . '", "' . __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.') . '");');
                     }
 
-                    foreach ($ctrl_infos as $ctrl_info) {
-                        echo '<tr class="' . $color . '">
-	    		';
+                    echo '</span>';
 
-                        echo '<td>' . $controller_name . '->' . $ctrl_info['name'] . '</td>';
+                    echo ' ';
+                    echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => 'right_' . implode('/', $aliases) . '_' . $role->$role_pk_name . '_' . $controller . '_' . $method . '_spinner', 'style' => 'display:none;'));
 
-                        foreach ($roles as $role) {
-                            echo '<td>';
-                            echo '<span id="right__' . $role->$role_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '">';
-
-                            /*
-                             * The right of the action for the role must still be loaded
-                             */
-                            echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('title' => __d('acl', 'loading')));
-
-                            if (!in_array($controller_name . '_' . $role->$role_pk_name, $js_init_done)) {
-                                $js_init_done[] = $controller_name . '_' . $role->$role_pk_name;
-                                $this->Js->buffer('init_register_role_controller_toggle_right("' . $this->Url->build('/', true) . '", "' . $role->$role_pk_name . '", "", "' . $controller_name . '", "' . __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.') . '");');
-                            }
-
-                            echo '</span>';
-
-                            echo ' ';
-                            echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => 'right__' . $role->$role_pk_name . '_' . $controller_name . '_' . $ctrl_info['name'] . '_spinner', 'style' => 'display:none;'));
-
-                            echo '</td>';
-                        }
-
-                        echo '</tr>
-		    	';
-                    }
-
-                    $i++;
+                    echo '</td>';
                 }
-            }
-            ?>
-            <?php
-            if (isset($actions['plugin']) && is_array($actions['plugin'])) {
-                foreach ($actions['plugin'] as $plugin_name => $plugin_ctrler_infos) {
-//    	    debug($plugin_name);
-//    	    debug($plugin_ctrler_infos);
 
-                    $color = null;
+                echo '</tr>';
 
-                    echo '<tr class="title"><td colspan="' . $column_count . '">' . __d('acl', 'Plugin') . ' ' . $plugin_name . '</td></tr>';
-
-                    $i = 0;
-                    foreach ($plugin_ctrler_infos as $plugin_ctrler_name => $plugin_methods) {
-                        //debug($plugin_ctrler_name);
-                        //echo '<tr style="background-color:#888888;color:#ffffff;"><td colspan="' . $column_count . '">' . $plugin_ctrler_name . '</td></tr>';
-
-                        if ($previous_ctrl_name != $plugin_ctrler_name) {
-                            $previous_ctrl_name = $plugin_ctrler_name;
-
-                            $color = ($i % 2 == 0) ? 'color1' : 'color2';
-                        }
-
-
-                        foreach ($plugin_methods as $method) {
-                            echo '<tr class="' . $color . '">
-    	            ';
-
-                            echo '<td>' . $plugin_ctrler_name . '->' . $method['name'] . '</td>';
-                            //debug($method['name']);
-
-                            foreach ($roles as $role) {
-                                echo '<td>';
-                                echo '<span id="right_' . $plugin_name . '_' . $role->$role_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '">';
-
-                                /*
-                                * The right of the action for the role must still be loaded
-                                */
-                                echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('title' => __d('acl', 'loading')));
-
-                                if (!in_array($plugin_name . "_" . $plugin_ctrler_name . '_' . $role->$role_pk_name, $js_init_done)) {
-                                    $js_init_done[] = $plugin_name . "_" . $plugin_ctrler_name . '_' . $role->$role_pk_name;
-                                    $this->Js->buffer('init_register_role_controller_toggle_right("' . $this->Url->build('/', true) . '", "' . $role->$role_pk_name . '", "' . $plugin_name . '", "' . $plugin_ctrler_name . '", "' . __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.') . '");');
-                                }
-
-                                echo '</span>';
-
-                                echo ' ';
-                                echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => 'right_' . $plugin_name . '_' . $role->$role_pk_name . '_' . $plugin_ctrler_name . '_' . $method['name'] . '_spinner', 'style' => 'display:none;'));
-
-                                echo '</td>';
-                            }
-
-                            echo '</tr>
-    	            ';
-                        }
-
-                        $i++;
-                    }
-                }
+                $previousAction = $action;
             }
             ?>
         </table>

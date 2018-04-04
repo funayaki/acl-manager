@@ -28,22 +28,20 @@
     echo '<br/>';
     ?>
     <table border="0" cellpadding="5" cellspacing="2">
-        <tr>
-            <?php
-            $column_count = 1;
+        <?php
+        $column_count = 1;
 
-            $headers = array($this->Paginator->sort($user_display_field, __d('acl', 'name')));
+        $headers = array($this->Paginator->sort($user_display_field, __d('acl', 'name')));
 
-            foreach ($roles as $role) {
-                $headers[] = $role->$role_display_field;
-                $column_count++;
-            }
+        foreach ($roles as $role) {
+            $headers[] = $role->$role_display_field;
+            $column_count++;
+        }
 
-            echo $this->Html->tableHeaders($headers);
+        echo $this->Html->tableHeaders($headers);
 
-            ?>
+        ?>
 
-        </tr>
         <?php
         foreach ($users as $user) {
             $style = isset($user['aro']) ? '' : ' class="line_warning"';
