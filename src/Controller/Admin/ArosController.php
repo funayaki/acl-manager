@@ -231,37 +231,8 @@ class ArosController extends AppController
 
         $actions = $this->AclReflector->get_all_actions();
 
-        $methods = array();
-        foreach ($actions as $k => $full_action) {
-            if (Configure::version() < '2.7') {
-                $arr = Text::tokenize($full_action, '/');
-            } else {
-                $arr = CakeText::tokenize($full_action, '/');
-            }
-
-            if (count($arr) == 2) {
-                $plugin_name = null;
-                $controller_name = $arr[0];
-                $action = $arr[1];
-            } elseif (count($arr) == 3) {
-                $plugin_name = $arr[0];
-                $controller_name = $arr[1];
-                $action = $arr[2];
-            }
-
-            if ($controller_name == 'App') {
-                unset($actions[$k]);
-            } else {
-                if (isset($plugin_name)) {
-                    $methods['plugin'][$plugin_name][$controller_name][] = array('name' => $action);
-                } else {
-                    $methods['app'][$controller_name][] = array('name' => $action);
-                }
-            }
-        }
-
         $this->set('roles', $roles);
-        $this->set('actions', $methods);
+        $this->set('actions', $actions);
     }
 
     public function rolePermissions()
