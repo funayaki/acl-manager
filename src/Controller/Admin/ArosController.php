@@ -384,7 +384,7 @@ class ArosController extends AppController
         if (empty($node)) {
             $this->Flash->error(sprintf(__d('acl', "The user '%s' does not exist in the ARO table"), $user_id));
         } else {
-            if ($this->Acl->adapter()->Permission->deleteAll(array('Aro.id' => $node->toArray()[0]->id))) {
+            if ($this->Acl->adapter()->Permission->deleteAll(array('aro_id' => $node->toArray()[0]->id))) {
                 $this->Flash->success(__d('acl', 'The specific permissions have been cleared'));
             } else {
                 $this->Flash->error(__d('acl', 'The specific permissions could not be cleared'));
