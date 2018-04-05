@@ -7,11 +7,11 @@
  * See how to include these settings in the README file
  */
 
+use Cake\Core\Configure;
+
 /*
  * The model name used for the user role (typically 'Role' or 'Group')
  */
-use Cake\Core\Configure;
-
 Configure:: write('acl.aro.role.model', 'Roles');
 
 /*
