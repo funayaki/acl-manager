@@ -9,7 +9,7 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
 </nav>
-<div class="aros user_permissions large-9 medium-8 columns content">
+<div class="aros check_user_permissions large-9 medium-8 columns content">
 
     <?php
     echo $this->element('design/header');
