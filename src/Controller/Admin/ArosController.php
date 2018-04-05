@@ -299,6 +299,7 @@ class ArosController extends AppController
             $users = $this->paginate($user_model_name, $filter);
 
             $this->set('users', $users);
+            $this->render('check_user_permissions');
         } else {
             $role_display_field = $this->AclManager->set_display_name($role_model_name, Configure:: read('acl.aro.role.display_field'));
 

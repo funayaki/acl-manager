@@ -2,10 +2,14 @@
 /**
  * @var \App\View\AppView $this
  */
+use Cake\Core\Configure;
+
+echo $this->Html->script('/acl_manager/js/jquery');
+echo $this->Html->script('/acl_manager/js/acl_plugin');
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
 </nav>
-<div class="aros users large-9 medium-8 columns content">
+<div class="aros check_user_permissions large-9 medium-8 columns content">
 
     <?php
     echo $this->element('design/header');
@@ -16,8 +20,15 @@
     ?>
 
     <?php
+    echo '<p>&nbsp;</p>';
+    echo '<p>';
+    echo __d('acl', 'This page allows to manage users specific rights');
+    echo '</p>';
+    echo '<p>&nbsp;</p>';
+    ?>
+    <?php
     echo $this->Form->create('User');
-    echo __d('acl', 'name');
+    echo __d('acl', 'user');
     echo '<br/>';
     echo $this->Form->input($user_display_field, array('label' => false, 'div' => false));
     echo ' ';
@@ -28,34 +39,22 @@
         <?php
         $column_count = 1;
 
-        $headers = array($this->Paginator->sort($user_display_field, __d('acl', 'name')));
-
-        foreach ($roles as $role) {
-            $headers[] = $role->$role_display_field;
-            $column_count++;
-        }
+        $headers = array($this->Paginator->sort(__d('acl', 'user'), $user_display_field));
 
         echo $this->Html->tableHeaders($headers);
-
         ?>
-
         <?php
         foreach ($users as $user) {
-            $style = isset($user['aro']) ? '' : ' class="line_warning"';
-
-            echo '<tr' . $style . '>';
+            echo '<tr>';
             echo '  <td>' . $user->$user_display_field . '</td>';
+            $title = __d('acl', 'Manage user specific rights');
 
-            foreach ($roles as $role) {
-                if (isset($user['aro']) && $role->$role_pk_name == $user->$role_fk_name) {
-                    echo '  <td>' . $this->Html->image('/acl_manager/img/design/tick.png') . '</td>';
-                } else {
-                    $title = __d('acl', 'Update the user role');
-                    echo '  <td>' . $this->Html->link($this->Html->image('/acl_manager/img/design/tick_disabled.png'), ['action' => 'updateUserRole', $user->$user_pk_name, $role->$role_pk_name], array('title' => $title, 'alt' => $title, 'escape' => false)) . '</td>';
-                }
+            $link = ['action' => 'user_permissions', $user->$user_pk_name];
+            if (Configure:: read('acl.gui.users_permissions.ajax') === true) {
+                $link [] = 'ajax';
             }
 
-            //echo '  <td>' . (isset($user['aro']) ? $this->Html->image('/acl_manager/img/design/tick.png') : $this->Html->image('/acl_manager/img/design/cross.png')) . '</td>';
+            echo '  <td>' . $this->Html->link($this->Html->image('/acl_manager/img/design/lock.png'), $link, array('alt' => $title, 'title' => $title, 'escape' => false)) . '</td>';
 
             echo '</tr>';
         }
@@ -70,19 +69,6 @@
             </td>
         </tr>
     </table>
-
-
-    <?php
-    if ($missing_aro) {
-        ?>
-        <div style="margin-top:20px">
-
-            <p class="warning"><?php echo __d('acl', 'Some users AROS are missing. Click on a role to assign one to a user.') ?></p>
-
-        </div>
-    <?php
-    }
-    ?>
 
     <?php
     echo $this->element('design/footer');
