@@ -1,4 +1,4 @@
-Acl Manager for CakePHP 3.x
+ACL Manager for CakePHP 3.x
 ===========================
 
 Version: 2.3.0
