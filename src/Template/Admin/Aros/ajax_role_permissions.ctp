@@ -7,9 +7,6 @@ echo $this->Html->script('/acl_manager/js/jquery');
 echo $this->Html->script('/acl_manager/js/acl_plugin');
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-    </ul>
 </nav>
 <div class="aros ajax_role_permissions large-9 medium-8 columns content">
 
