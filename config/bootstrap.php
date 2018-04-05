@@ -74,11 +74,13 @@ Configure:: write('acl.check_act_as_requester', true);
 // App:: build(array('locales' => App:: pluginPath('Acl') . DS . 'locale')); // TODO FIX ME
 
 /*
+ * Warning: This option is WIP
  * Indicates whether the roles permissions page must load through Ajax
  */
-Configure:: write('acl.gui.roles_permissions.ajax', true);
+//Configure:: write('acl.gui.roles_permissions.ajax', true);
 
 /*
+ * Warning: This option is WIP
  * Indicates whether the users permissions page must load through Ajax
  */
-Configure:: write('acl.gui.users_permissions.ajax', true);
+//Configure:: write('acl.gui.users_permissions.ajax', true);
