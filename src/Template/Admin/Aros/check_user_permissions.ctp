@@ -37,9 +37,12 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
     ?>
     <table border="0" cellpadding="5" cellspacing="2">
         <?php
-        $column_count = 1;
+        $column_count = 2;
 
-        $headers = array($this->Paginator->sort(__d('acl', 'user'), $user_display_field));
+        $headers = [
+            $this->Paginator->sort(__d('acl', 'user'), $user_display_field),
+            ''
+        ];
 
         echo $this->Html->tableHeaders($headers);
         ?>

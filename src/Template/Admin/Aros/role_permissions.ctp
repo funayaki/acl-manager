@@ -34,7 +34,7 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
     <table cellspacing="0">
 
         <tr>
-            <th></th>
+            <th><?php echo h($role_display_field); ?></th>
             <th><?php echo __d('acl', 'grant access to <em>all actions</em>'); ?></th>
             <th><?php echo __d('acl', 'deny access to <em>all actions</em>'); ?></th>
         </tr>
