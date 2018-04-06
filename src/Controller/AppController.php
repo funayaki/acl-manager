@@ -43,20 +43,6 @@ class AppController extends BaseController
 
             $this->_authorize_admins();
 
-//	    	if($this->name != 'Acl'
-//	    		&&
-//	    	   ($this->name != 'Acos' || $this->action != 'admin_build_acl')
-//	    	  )
-//	    	{
-//	    	    $missing_aco_nodes = $this->AclManager->get_missing_acos();
-//
-//		    	if(count($missing_aco_nodes) > 0)
-//	    		{
-//	    		    $this->set('missing_aco_nodes', $missing_aco_nodes);
-//	    		    $this->render('/Acos/admin_acos_missing');
-//	    		}
-//	    	}
-
             if (Configure:: read('acl.check_act_as_requester')) {
                 $is_requester = true;
 
