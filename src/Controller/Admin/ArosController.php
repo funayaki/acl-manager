@@ -478,11 +478,9 @@ class ArosController extends AppController
         }
     }
 
-    public function grantRolePermission($role_id)
+    public function grantRolePermission($role_id, ...$aliases)
     {
-        $args = func_get_args();
-        array_shift($args);
-        $aco_path = implode('/', $args);
+        $aco_path = implode('/', $aliases);
 
         /*
          * Check if the role exists in the ARO table
@@ -507,11 +505,9 @@ class ArosController extends AppController
         }
     }
 
-    public function denyRolePermission($role_id)
+    public function denyRolePermission($role_id, ...$aliases)
     {
-        $args = func_get_args();
-        array_shift($args);
-        $aco_path = implode('/', $args);
+        $aco_path = implode('/', $aliases);
 
         /*
          * Check if the role exists in the ARO table
@@ -576,11 +572,9 @@ class ArosController extends AppController
         }
     }
 
-    public function grantUserPermission($user_id)
+    public function grantUserPermission($user_id, ...$aliases)
     {
-        $args = func_get_args();
-        array_shift($args);
-        $aco_path = implode('/', $args);
+        $aco_path = implode('/', $aliases);
 
         /*
          * Check if the user exists in the ARO table
@@ -604,11 +598,9 @@ class ArosController extends AppController
         }
     }
 
-    public function denyUserPermission($user_id)
+    public function denyUserPermission($user_id, ...$aliases)
     {
-        $args = func_get_args();
-        array_shift($args);
-        $aco_path = implode('/', $args);
+        $aco_path = implode('/', $aliases);
 
         /*
          * Check if the user exists in the ARO table
