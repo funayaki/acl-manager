@@ -41,7 +41,7 @@ class AppController extends BaseController
             $this->set('user_pk_name', $this->AclManager->getUserPrimaryKeyName());
             $this->set('role_fk_name', $this->AclManager->getRoleForeignKeyName());
 
-            $this->_authorize_admins();
+            $this->_authorizeAdmins();
 
             if (Configure:: read('acl.check_act_as_requester')) {
                 $is_requester = true;
@@ -105,7 +105,7 @@ class AppController extends BaseController
         }
     }
 
-    private function _authorize_admins()
+    private function _authorizeAdmins()
     {
         $authorized_role_ids = Configure:: read('acl.role.access_plugin_role_ids');
         $authorized_user_ids = Configure:: read('acl.role.access_plugin_user_ids');
@@ -123,7 +123,7 @@ class AppController extends BaseController
         }
     }
 
-    protected function _get_passed_aco_path()
+    protected function _getPassedACOPath()
     {
         $aco_path = isset($this->params['named']['plugin']) ? $this->params['named']['plugin'] : '';
         $aco_path .= empty($aco_path) ? $this->params['named']['controller'] : '/' . $this->params['named']['controller'];
@@ -132,14 +132,14 @@ class AppController extends BaseController
         return $aco_path;
     }
 
-    protected function _set_aco_variables()
+    protected function _setACOVariables()
     {
         $this->set('plugin', isset($this->params['named']['plugin']) ? $this->params['named']['plugin'] : '');
         $this->set('controller_name', $this->params['named']['controller']);
         $this->set('action', $this->params['named']['action']);
     }
 
-    protected function _return_to_referer()
+    protected function _returnToReferer()
     {
         $this->redirect($this->referer(array('action' => 'index')));
     }

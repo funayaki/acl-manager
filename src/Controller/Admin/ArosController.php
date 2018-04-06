@@ -215,7 +215,7 @@ class ArosController extends AppController
             $this->Flash->error(print_r($user->errors(), true));
         }
 
-        $this->_return_to_referer();
+        $this->_returnToReferer();
     }
 
     public function ajaxRolePermissions()
@@ -368,7 +368,7 @@ class ArosController extends AppController
             $this->Flash->error(__d('acl', 'The permissions could not be cleared'));
         }
 
-        $this->_return_to_referer();
+        $this->_returnToReferer();
     }
 
     public function clearUserSpecificPermissions($user_id)
@@ -392,7 +392,7 @@ class ArosController extends AppController
             }
         }
 
-        $this->_return_to_referer();
+        $this->_returnToReferer();
     }
 
     public function grantAllControllers($role_id)
@@ -413,7 +413,7 @@ class ArosController extends AppController
             $this->Acl->allow($ref, $this->AclReflector->getRootNodeName()); // TODO FIX ME
         }
 
-        $this->_return_to_referer();
+        $this->_returnToReferer();
     }
 
     public function denyAllControllers($role_id)
@@ -434,7 +434,7 @@ class ArosController extends AppController
             $this->Acl->deny($ref, $this->AclReflector->getRootNodeName());
         }
 
-        $this->_return_to_referer();
+        $this->_returnToReferer();
     }
 
     public function getRoleControllerPermission($role_id)
@@ -474,7 +474,7 @@ class ArosController extends AppController
             echo json_encode($role_controller_permissions);
             $this->autoRender = false;
         } else {
-            $this->_return_to_referer();
+            $this->_returnToReferer();
         }
     }
 
@@ -503,7 +503,7 @@ class ArosController extends AppController
         if ($this->request->is('Ajax')) {
             $this->render('ajax_role_granted');
         } else {
-            $this->_return_to_referer();
+            $this->_returnToReferer();
         }
     }
 
@@ -531,7 +531,7 @@ class ArosController extends AppController
         if ($this->request->is('Ajax')) {
             $this->render('ajax_role_denied');
         } else {
-            $this->_return_to_referer();
+            $this->_returnToReferer();
         }
     }
 
@@ -572,7 +572,7 @@ class ArosController extends AppController
             echo json_encode($user_controller_permissions);
             $this->autoRender = false;
         } else {
-            $this->_return_to_referer();
+            $this->_returnToReferer();
         }
     }
 
@@ -600,7 +600,7 @@ class ArosController extends AppController
         if ($this->request->is('Ajax')) {
             $this->render('ajax_user_granted');
         } else {
-            $this->_return_to_referer();
+            $this->_returnToReferer();
         }
     }
 
@@ -628,7 +628,7 @@ class ArosController extends AppController
         if ($this->request->is('Ajax')) {
             $this->render('ajax_user_denied');
         } else {
-            $this->_return_to_referer();
+            $this->_returnToReferer();
         }
     }
 }
