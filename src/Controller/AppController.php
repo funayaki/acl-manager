@@ -87,8 +87,8 @@ class AppController extends BaseController
 
         if ($controller != 'Acos'
             || !(($prefix == 'admin' && $action == 'synchronize') ||
-                ($prefix == 'admin' && $action == 'prune_acos') ||
-                ($prefix == 'admin' && $action == 'build_acl'))
+                ($prefix == 'admin' && $action == 'pruneAcos') ||
+                ($prefix == 'admin' && $action == 'buildAcl'))
         ) {
             if ($this->AclManager->controllerHashFileIsOutOfSync()) {
                 $missing_aco_nodes = $this->AclManager->getMissingACOs();
