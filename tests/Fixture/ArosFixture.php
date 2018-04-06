@@ -51,7 +51,7 @@ class ArosFixture extends TestFixture
             'foreign_key' => 1,
             'alias' => null,
             'lft' => 1,
-            'rght' => 3
+            'rght' => 4
         ],
         [
             'id' => 2,
