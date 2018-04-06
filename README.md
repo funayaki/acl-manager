@@ -64,18 +64,7 @@ git clone -b master git://github.com/tsmsogn/acl-manager.git AclManager
 In 3.0 you need to enable the plugin your `config/bootstrap.php` file:
 
 ```php
-Plugin::load('AclManager', ['bootstrap' => true, 'routes' => true]);
-```
-
-Then in your composer.json:
-
-```json
-     "autoload": {
-         "psr-4": {
-             "App\\": "src/",
-             "AclManager\\": "./plugins/AclManager/src"
-         }
-     },
+Plugin::load('AclManager', ['bootstrap' => true, 'routes' => true, 'autoload' => true]);
 ```
 
 ### Acting as a requester
