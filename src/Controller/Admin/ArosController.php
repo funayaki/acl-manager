@@ -51,8 +51,8 @@ class ArosController extends AppController
         $user_model_name = Configure:: read('acl.aro.user.model');
         $role_model_name = Configure:: read('acl.aro.role.model');
 
-        $user_display_field = $this->AclManager->set_display_name($user_model_name, Configure:: read('acl.user.display_name'));
-        $role_display_field = $this->AclManager->set_display_name($role_model_name, Configure:: read('acl.aro.role.display_field'));
+        $user_display_field = $this->AclManager->setDisplayName($user_model_name, Configure:: read('acl.user.display_name'));
+        $role_display_field = $this->AclManager->setDisplayName($role_model_name, Configure:: read('acl.aro.role.display_field'));
 
         $this->set('user_display_field', $user_display_field);
         $this->set('role_display_field', $role_display_field);
@@ -156,8 +156,8 @@ class ArosController extends AppController
         $user_model_name = Configure:: read('acl.aro.user.model');
         $role_model_name = Configure:: read('acl.aro.role.model');
 
-        $user_display_field = $this->AclManager->set_display_name($user_model_name, Configure:: read('acl.user.display_name'));
-        $role_display_field = $this->AclManager->set_display_name($role_model_name, Configure:: read('acl.aro.role.display_field'));
+        $user_display_field = $this->AclManager->setDisplayName($user_model_name, Configure:: read('acl.user.display_name'));
+        $role_display_field = $this->AclManager->setDisplayName($role_model_name, Configure:: read('acl.aro.role.display_field'));
 
         $this->paginate['order'] = array($user_display_field => 'asc');
 
@@ -222,14 +222,14 @@ class ArosController extends AppController
     {
         $role_model_name = Configure:: read('acl.aro.role.model');
 
-        $role_display_field = $this->AclManager->set_display_name($role_model_name, Configure:: read('acl.aro.role.display_field'));
+        $role_display_field = $this->AclManager->setDisplayName($role_model_name, Configure:: read('acl.aro.role.display_field'));
 
         $this->set('role_display_field', $role_display_field);
 
         $this->{$role_model_name}->recursive = -1;
         $roles = $this->{$role_model_name}->find('all', array('order' => $role_display_field, 'contain' => false, 'recursive' => -1));
 
-        $actions = $this->AclReflector->get_all_actions();
+        $actions = $this->AclReflector->getAllActions();
 
         $this->set('roles', $roles);
         $this->set('actions', $actions);
@@ -239,14 +239,14 @@ class ArosController extends AppController
     {
         $role_model_name = Configure:: read('acl.aro.role.model');
 
-        $role_display_field = $this->AclManager->set_display_name($role_model_name, Configure:: read('acl.aro.role.display_field'));
+        $role_display_field = $this->AclManager->setDisplayName($role_model_name, Configure:: read('acl.aro.role.display_field'));
 
         $this->set('role_display_field', $role_display_field);
 
         $this->{$role_model_name}->recursive = -1;
         $roles = $this->{$role_model_name}->find('all', array('order' => $role_display_field, 'contain' => false, 'recursive' => -1));
 
-        $actions = $this->AclReflector->get_all_actions();
+        $actions = $this->AclReflector->getAllActions();
 
         $permissions = [];
         foreach ($actions as $full_action) {
@@ -278,7 +278,7 @@ class ArosController extends AppController
         $user_model_name = Configure:: read('acl.aro.user.model');
         $role_model_name = Configure:: read('acl.aro.role.model');
 
-        $user_display_field = $this->AclManager->set_display_name($user_model_name, Configure:: read('acl.user.display_name'));
+        $user_display_field = $this->AclManager->setDisplayName($user_model_name, Configure:: read('acl.user.display_name'));
 
         $this->paginate['order'] = array($user_display_field => 'asc');
         $this->set('user_display_field', $user_display_field);
@@ -301,7 +301,7 @@ class ArosController extends AppController
             $this->set('users', $users);
             $this->render('check_user_permissions');
         } else {
-            $role_display_field = $this->AclManager->set_display_name($role_model_name, Configure:: read('acl.aro.role.display_field'));
+            $role_display_field = $this->AclManager->setDisplayName($role_model_name, Configure:: read('acl.aro.role.display_field'));
 
             $this->set('role_display_field', $role_display_field);
 
@@ -321,7 +321,7 @@ class ArosController extends AppController
                 $display_user = $this->{$user_model_name}->find('first', array('conditions' => array($user_model_name . '.id' => $user_id, 'contain' => false, 'recursive' => -1)));
                 $this->Flash->error(sprintf(__d('acl', "The user '%s' does not exist in the ARO table"), $display_user->$user_display_field));
             } else {
-                $actions = $this->AclReflector->get_all_actions();
+                $actions = $this->AclReflector->getAllActions();
 
                 foreach ($actions as $full_action) {
                     if (!isset($this->params['named']['ajax'])) {

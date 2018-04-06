@@ -47,7 +47,7 @@ class AclManagerComponent extends Component
      *
      * @return boolean true if the file exists or could be created
      */
-    private function check_controller_hash_tmp_file()
+    private function checkControllerHashTmpFile()
     {
         if (is_writable(dirname($this->controllers_hash_file))) {
             $file = new File($this->controllers_hash_file, true);
@@ -60,7 +60,7 @@ class AclManagerComponent extends Component
 
     /****************************************************************************************/
 
-    public function check_user_model_acts_as_acl_requester($model_classname)
+    public function checkUserModelActsAsAclRequester($model_classname)
     {
 //		if(!isset($this->controller->{$model_classname}))
 //		{
@@ -74,7 +74,7 @@ class AclManagerComponent extends Component
 //			$user_model = $this->controller->{$model_classname};
 //		}
 
-        $user_model = $this->get_model_instance($model_classname);
+        $user_model = $this->getModelInstance($model_classname);
 
         $behaviors = $user_model->behaviors();
         if (!empty($behaviors) && $behaviors->has('Acl')) {
@@ -94,9 +94,9 @@ class AclManagerComponent extends Component
      * @param string $field_expression
      * @return string The name of the field to use as display name
      */
-    public function set_display_name($model_classname, $field_expression)
+    public function setDisplayName($model_classname, $field_expression)
     {
-        $model_instance = $this->get_model_instance($model_classname);
+        $model_instance = $this->getModelInstance($model_classname);
 
         $schema = $model_instance->schema();
 
@@ -135,7 +135,7 @@ class AclManagerComponent extends Component
      * @param string $model_classname
      * @return \Cake\ORM\Table
      */
-    private function get_model_instance($model_classname)
+    private function getModelInstance($model_classname)
     {
         if (!isset($this->controller->{$model_classname})) {
             /*
@@ -154,9 +154,9 @@ class AclManagerComponent extends Component
      *
      * @return array
      */
-    public function get_stored_controllers_hashes()
+    public function getStoredControllersHashes()
     {
-        if ($this->check_controller_hash_tmp_file()) {
+        if ($this->checkControllerHashTmpFile()) {
             $file = new File($this->controllers_hash_file);
             $file_content = $file->read();
 
@@ -175,9 +175,9 @@ class AclManagerComponent extends Component
      *
      * @return array
      */
-    public function get_current_controllers_hashes()
+    public function getCurrentControllersHashes()
     {
-        $controllers = $this->AclReflector->get_all_controllers();
+        $controllers = $this->AclReflector->getAllControllers();
 
         $current_controller_hashes = array();
 
@@ -192,9 +192,9 @@ class AclManagerComponent extends Component
     /**
      * Return ACOs paths that should exist in the ACO datatable but do not exist
      */
-    function get_missing_acos()
+    function getMissingACOs()
     {
-        $actions = $this->AclReflector->get_all_actions();
+        $actions = $this->AclReflector->getAllActions();
         $existingActions = $this->getActionsInDatabase();
         return array_diff($actions, $existingActions);
     }
@@ -203,11 +203,11 @@ class AclManagerComponent extends Component
      * Store missing ACOs for all actions in the datasource
      * If necessary, it creates actions parent nodes (plugin and controller) as well
      */
-    public function create_acos()
+    public function createACOs()
     {
         $Aco = $this->Acl->Aco;
 
-        $missing_acos = $this->get_missing_acos();
+        $missing_acos = $this->getMissingACOs();
 
         $rootNode = $this->getRootNode();
 
@@ -255,19 +255,19 @@ class AclManagerComponent extends Component
         return $log;
     }
 
-    public function update_controllers_hash_file()
+    public function updateControllersHashFile()
     {
-        $current_controller_hashes = $this->get_current_controllers_hashes();
+        $current_controller_hashes = $this->getCurrentControllersHashes();
 
         $file = new File($this->controllers_hash_file);
         $file->write(serialize($current_controller_hashes));
     }
 
-    public function controller_hash_file_is_out_of_sync()
+    public function controllerHashFileIsOutOfSync()
     {
-        if ($this->check_controller_hash_tmp_file()) {
-            $stored_controller_hashes = $this->get_stored_controllers_hashes();
-            $current_controller_hashes = $this->get_current_controllers_hashes();
+        if ($this->checkControllerHashTmpFile()) {
+            $stored_controller_hashes = $this->getStoredControllersHashes();
+            $current_controller_hashes = $this->getCurrentControllersHashes();
 
             /*
              * Check what controllers have changed
@@ -281,9 +281,9 @@ class AclManagerComponent extends Component
     /**
      * @return array
      */
-    public function get_acos_to_prune()
+    public function getACOsToPrune()
     {
-        $actions = $this->AclReflector->get_all_actions();
+        $actions = $this->AclReflector->getAllActions();
         $existingActions = $this->getActionsInDatabase();
         return array_diff($existingActions, $actions);
     }
@@ -293,13 +293,13 @@ class AclManagerComponent extends Component
      *
      * @return array log of removed ACO nodes
      */
-    public function prune_acos()
+    public function pruneACOs()
     {
         $Aco = $this->Acl->Aco;
 
         $log = [];
 
-        $paths_to_prune = $this->get_acos_to_prune();
+        $paths_to_prune = $this->getACOsToPrune();
 
         foreach ($paths_to_prune as $path_to_prune) {
             $query = $Aco->node($path_to_prune);
@@ -323,7 +323,7 @@ class AclManagerComponent extends Component
      * @param string $aco_path The Aco path to check for
      * @param string $permission_type 'deny' or 'allow', 'grant', depending on what permission (grant or deny) is being set
      */
-    public function save_permission($aro_nodes, $aco_path, $permission_type)
+    public function savePermission($aro_nodes, $aco_path, $permission_type)
     {
         if (isset($aro_nodes[0])) {
             $aco_path = $this->AclReflector->getRootNodeName() . '/' . $aco_path;
@@ -338,14 +338,14 @@ class AclManagerComponent extends Component
             $aro_model_data = array($aro_nodes[0]['Aro']['model'] => array($pk_name => $aro_nodes[0]['Aro']['foreign_key']));
             $aro_id = $aro_nodes[0]['Aro']['id'];
 
-            $specific_permission_right = $this->get_specific_permission_right($aro_nodes[0], $aco_path);
-            $inherited_permission_right = $this->get_first_parent_permission_right($aro_nodes[0], $aco_path);
+            $specific_permission_right = $this->getSpecificPermissionRight($aro_nodes[0], $aco_path);
+            $inherited_permission_right = $this->getFirstParentPermissionRight($aro_nodes[0], $aco_path);
 
             if (!isset($inherited_permission_right) && count($aro_nodes) > 1) {
                 /*
                  * Get the permission inherited by the parent ARO
                  */
-                $specific_parent_aro_permission_right = $this->get_specific_permission_right($aro_nodes[1], $aco_path);
+                $specific_parent_aro_permission_right = $this->getSpecificPermissionRight($aro_nodes[1], $aco_path);
 
                 if (isset($specific_parent_aro_permission_right)) {
                     /*
@@ -353,7 +353,7 @@ class AclManagerComponent extends Component
                      */
                     $inherited_permission_right = $specific_parent_aro_permission_right;
                 } else {
-                    $inherited_permission_right = $this->get_first_parent_permission_right($aro_nodes[1], $aco_path);
+                    $inherited_permission_right = $this->getFirstParentPermissionRight($aro_nodes[1], $aco_path);
                 }
             }
 
@@ -426,7 +426,7 @@ class AclManagerComponent extends Component
         }
     }
 
-    private function get_specific_permission_right($aro_node, $aco_path)
+    private function getSpecificPermissionRight($aro_node, $aco_path)
     {
         $pk_name = 'id';
         if ($aro_node['Aro']['model'] == Configure:: read('acl.aro.role.model')) {
@@ -471,7 +471,7 @@ class AclManagerComponent extends Component
         return null; // no specific permission found
     }
 
-    private function get_first_parent_permission_right($aro_node, $aco_path)
+    private function getFirstParentPermissionRight($aro_node, $aco_path)
     {
         $pk_name = 'id';
         if ($aro_node['Aro']['model'] == Configure:: read('acl.aro.role.model')) {
@@ -514,10 +514,10 @@ class AclManagerComponent extends Component
      * Set the permissions of the authenticated user in Session
      * The session permissions are then used for instance by the AclHtmlHelper->link() function
      */
-    public function set_session_permissions()
+    public function setSessionPermissions()
     {
         if (!$this->Session->check('Alaxos.Acl.permissions')) {
-            $actions = $this->AclReflector->get_all_actions();
+            $actions = $this->AclReflector->getAllActions();
 
             $user = $this->Auth->user();
 

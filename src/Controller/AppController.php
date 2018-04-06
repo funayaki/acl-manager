@@ -60,12 +60,12 @@ class AppController extends BaseController
             if (Configure:: read('acl.check_act_as_requester')) {
                 $is_requester = true;
 
-                if (!$this->AclManager->check_user_model_acts_as_acl_requester(Configure:: read('acl.aro.user.model'))) {
+                if (!$this->AclManager->checkUserModelActsAsAclRequester(Configure:: read('acl.aro.user.model'))) {
                     $this->set('model_is_not_requester', false);
                     $is_requester = false;
                 }
 
-                if (!$this->AclManager->check_user_model_acts_as_acl_requester(Configure:: read('acl.aro.role.model'))) {
+                if (!$this->AclManager->checkUserModelActsAsAclRequester(Configure:: read('acl.aro.role.model'))) {
                     $this->set('role_is_not_requester', false);
                     $is_requester = false;
                 }
@@ -90,9 +90,9 @@ class AppController extends BaseController
                 ($prefix == 'admin' && $action == 'prune_acos') ||
                 ($prefix == 'admin' && $action == 'build_acl'))
         ) {
-            if ($this->AclManager->controller_hash_file_is_out_of_sync()) {
-                $missing_aco_nodes = $this->AclManager->get_missing_acos();
-                $nodes_to_prune = $this->AclManager->get_acos_to_prune();
+            if ($this->AclManager->controllerHashFileIsOutOfSync()) {
+                $missing_aco_nodes = $this->AclManager->getMissingACOs();
+                $nodes_to_prune = $this->AclManager->getACOsToPrune();
 
                 $has_updates = false;
 
@@ -110,10 +110,10 @@ class AppController extends BaseController
                 if ($has_updates) {
                     $this->render('/Admin/Acos/has_updates');
                     $this->response->send();
-                    $this->AclManager->update_controllers_hash_file();
+                    $this->AclManager->updateControllersHashFile();
                     die();
                 } else {
-                    $this->AclManager->update_controllers_hash_file();
+                    $this->AclManager->updateControllersHashFile();
                 }
             }
         }
