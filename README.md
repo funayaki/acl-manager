@@ -80,7 +80,7 @@ Then in your composer.json:
 
 ### Acting as a requester
 
-Add `$this->addBehavior('Acl.Acl', ['type' => 'requester']);` to the initialize function in the files src/Model/Table/RolesTable.php and src/Model/Table/UsersTable.php:
+Add `$this->addBehavior('Acl.Acl', ['type' => 'requester']);` to the initialize function in the files `src/Model/Table/RolesTable.php` and `src/Model/Table/UsersTable.php`:
 
 ```php
     public function initialize(array $config) {
