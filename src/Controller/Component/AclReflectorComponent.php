@@ -117,7 +117,7 @@ class AclReflectorComponent extends Component
     /**
      * @return array
      */
-    public function get_all_controllers()
+    public function getAllControllers()
     {
         return $this->controllers;
     }
@@ -125,10 +125,10 @@ class AclReflectorComponent extends Component
     /**
      *
      */
-    public function get_all_actions()
+    public function getAllActions()
     {
         $actions = [];
-        foreach ($this->get_all_controllers() as $path => $controller) {
+        foreach ($this->getAllControllers() as $path => $controller) {
             $controller_actions = $this->getActionList($controller['className'], $controller['plugin'], $controller['prefix']);
             if ($controller_actions) {
                 foreach ($controller_actions as $controller_action) {
