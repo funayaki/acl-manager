@@ -68,7 +68,7 @@ class ArosController extends AppController
             $aro = $this->Acl->Aro->find()
                 ->where([
                     'model' => $role_model_name,
-                    'foreign_key' => $role->{$this->_get_role_primary_key_name()}
+                    'foreign_key' => $role->{$this->AclManager->getRolePrimaryKeyName()}
                 ])
                 ->first();
 
@@ -85,7 +85,7 @@ class ArosController extends AppController
             $aro = $this->Acl->Aro->find()
                 ->where([
                     'model' => $user_model_name,
-                    'foreign_key' => $user->{$this->_get_user_primary_key_name()}
+                    'foreign_key' => $user->{$this->AclManager->getUserPrimaryKeyName()}
                 ])
                 ->first();
 
@@ -106,7 +106,7 @@ class ArosController extends AppController
                     $aro = $this->Acl->Aro->newEntity([
                         'parent_id' => null,
                         'model' => $role_model_name,
-                        'foreign_key' => $role->{$this->_get_role_primary_key_name()},
+                        'foreign_key' => $role->{$this->AclManager->getRolePrimaryKeyName()},
                     ]);
 
                     if ($this->Acl->Aro->save($aro)) {
@@ -126,7 +126,7 @@ class ArosController extends AppController
                     $parent = $this->Acl->Aro->find()
                         ->where([
                             'model' => $role_model_name,
-                            'foreign_key' => $user->{$this->_get_role_foreign_key_name()}
+                            'foreign_key' => $user->{$this->AclManager->getRoleForeignKeyName()}
                         ])
                         ->first();
 
@@ -134,7 +134,7 @@ class ArosController extends AppController
                         $aro = $this->Acl->Aro->newEntity(
                             ['parent_id' => $parent->id,
                                 'model' => $user_model_name,
-                                'foreign_key' => $user->{$this->_get_user_primary_key_name()},
+                                'foreign_key' => $user->{$this->AclManager->getUserPrimaryKeyName()},
                             ]);
 
                         if ($this->Acl->Aro->save($aro)) {
@@ -207,7 +207,7 @@ class ArosController extends AppController
         $user_model_name = Configure:: read('acl.aro.user.model');
 
         $user = $this->{$user_model_name}->get($user_pk);
-        $user->{$this->_get_role_foreign_key_name()} = $role_pk;
+        $user->{$this->AclManager->getRoleForeignKeyName()} = $role_pk;
 
         if ($this->{$user_model_name}->save($user)) {
             $this->Flash->success(__d('acl', 'The user role has been updated'));
@@ -257,13 +257,13 @@ class ArosController extends AppController
                     if (!empty($aco_node)) {
                         $authorized = $this->Acl->check($role, $this->AclReflector->getRootNodeName() . '/' . $full_action);
 
-                        $permissions[$full_action][$role->{$this->_get_role_primary_key_name()}] = $authorized ? 1 : 0;
+                        $permissions[$full_action][$role->{$this->AclManager->getRolePrimaryKeyName()}] = $authorized ? 1 : 0;
                     }
                 } else {
                     /*
                      * No check could be done as the ARO is missing
                      */
-                    $permissions[$full_action][$role->{$this->_get_role_primary_key_name()}] = -1;
+                    $permissions[$full_action][$role->{$this->AclManager->getRolePrimaryKeyName()}] = -1;
                 }
             }
         }
@@ -329,7 +329,7 @@ class ArosController extends AppController
                         if (!empty($aco_node)) {
                             $authorized = $this->Acl->check($user, $this->AclReflector->getRootNodeName() . '/' . $full_action);
 
-                            $permissions[$full_action][$user->{$this->_get_user_primary_key_name()}] = $authorized ? 1 : 0;
+                            $permissions[$full_action][$user->{$this->AclManager->getUserPrimaryKeyName()}] = $authorized ? 1 : 0;
                         }
                     }
                 }
