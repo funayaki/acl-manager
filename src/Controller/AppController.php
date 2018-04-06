@@ -26,11 +26,11 @@ class AppController extends BaseController
     {
         parent:: beforeFilter($event);
 
-        $this->_check_config();
-        $this->_check_files_updates();
+        $this->_checkConfig();
+        $this->_checkFilesUpdates();
     }
 
-    private function _check_config()
+    private function _checkConfig()
     {
         $role_model_name = Configure:: read('acl.aro.role.model');
 
@@ -65,7 +65,7 @@ class AppController extends BaseController
         }
     }
 
-    protected function _check_files_updates()
+    protected function _checkFilesUpdates()
     {
         $prefix = $this->request->getParam('prefix');
         $controller = $this->request->getParam('controller');
