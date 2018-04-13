@@ -34,7 +34,7 @@ class AppController extends BaseController
     {
         $role_model_name = Configure:: read('acl.aro.role.model');
 
-        if (!empty($role_model_name)) {
+        if ($role_model_name) {
             $this->set('role_model_name', $role_model_name);
             $this->set('user_model_name', Configure:: read('acl.aro.user.model'));
             $this->set('role_pk_name', $this->AclManager->getRolePrimaryKeyName());
@@ -126,7 +126,7 @@ class AppController extends BaseController
     protected function _getPassedACOPath()
     {
         $aco_path = isset($this->params['named']['plugin']) ? $this->params['named']['plugin'] : '';
-        $aco_path .= empty($aco_path) ? $this->params['named']['controller'] : '/' . $this->params['named']['controller'];
+        $aco_path .= !$aco_path ? $this->params['named']['controller'] : '/' . $this->params['named']['controller'];
         $aco_path .= '/' . $this->params['named']['action'];
 
         return $aco_path;

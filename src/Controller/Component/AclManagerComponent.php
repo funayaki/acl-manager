@@ -77,7 +77,7 @@ class AclManagerComponent extends Component
         $user_model = $this->getModelInstance($model_classname);
 
         $behaviors = $user_model->behaviors();
-        if (!empty($behaviors) && $behaviors->has('Acl')) {
+        if ($behaviors && $behaviors->has('Acl')) {
             $type = $behaviors->get('Acl')->config('type');
             return $type == 'requester';
         }
@@ -160,7 +160,7 @@ class AclManagerComponent extends Component
             $file = new File($this->controllers_hash_file);
             $file_content = $file->read();
 
-            if (!empty($file_content)) {
+            if ($file_content) {
                 $stored_controller_hashes = unserialize($file_content);
             } else {
                 $stored_controller_hashes = array();
@@ -228,7 +228,7 @@ class AclManagerComponent extends Component
                  */
                 $query = $Aco->node($look_path);
 
-                if (empty($query)) {
+                if (!$query) {
                     $parent_id = null;
 
                     if (isset($parent_node)) {
@@ -274,7 +274,7 @@ class AclManagerComponent extends Component
              */
             $updated_controllers = array_keys(Hash:: diff($current_controller_hashes, $stored_controller_hashes));
 
-            return !empty($updated_controllers);
+            return $updated_controllers;
         }
     }
 
@@ -303,7 +303,7 @@ class AclManagerComponent extends Component
 
         foreach ($paths_to_prune as $path_to_prune) {
             $query = $Aco->node($path_to_prune);
-            if (!empty($query)) {
+            if ($query) {
                 $node = $query->first();
                 $entity = $Aco->get($node->id);
                 if ($Aco->delete($entity)) {
@@ -388,12 +388,12 @@ class AclManagerComponent extends Component
                 }
             } elseif (isset($specific_permission_right)) {
                 $aco_node = $this->Acl->Aco->node($aco_path);
-                if (!empty($aco_node)) {
+                if ($aco_node) {
                     $aco_id = $aco_node[0]['Aco']['id'];
 
                     $specific_permission = $this->Acl->Aro->Permission->find('first', array('conditions' => array('aro_id' => $aro_id, 'aco_id' => $aco_id)));
 
-                    if (!empty($specific_permission)) {
+                    if ($specific_permission) {
                         if ($this->Acl->Aro->Permission->delete(array('Permission.id' => $specific_permission['Permission']['id']))) {
                             return true;
                         } else {
@@ -449,12 +449,12 @@ class AclManagerComponent extends Component
         $specific_permission_right = null;
 
         $aco_node = $this->Acl->Aco->node($aco_path);
-        if (!empty($aco_node)) {
+        if ($aco_node) {
             $aco_id = $aco_node[0]['Aco']['id'];
 
             $specific_permission = $this->Acl->Aro->Permission->find('first', array('conditions' => array('aro_id' => $aro_id, 'aco_id' => $aco_id)));
 
-            if (!empty($specific_permission)) {
+            if ($specific_permission) {
                 /*
                  * Check the right (grant => true / deny => false) of this specific permission
                  */
@@ -487,12 +487,12 @@ class AclManagerComponent extends Component
             $aco_path = substr($aco_path, 0, strrpos($aco_path, '/'));
 
             $parent_aco_node = $this->Acl->Aco->node($aco_path);
-            if (!empty($parent_aco_node)) {
+            if ($parent_aco_node) {
                 $parent_aco_id = $parent_aco_node[0]['Aco']['id'];
 
                 $parent_permission = $this->Acl->Aro->Permission->find('first', array('conditions' => array('aro_id' => $aro_id, 'aco_id' => $parent_aco_id)));
 
-                if (!empty($parent_permission)) {
+                if ($parent_permission) {
                     /*
                      * Check the right (grant => true / deny => false) of this first parent permission
                      */
@@ -521,7 +521,7 @@ class AclManagerComponent extends Component
 
             $user = $this->Auth->user();
 
-            if (!empty($user)) {
+            if ($user) {
                 $user = array(Configure:: read('acl.aro.user.model') => $user);
                 $permissions = array();
 
@@ -608,7 +608,7 @@ class AclManagerComponent extends Component
     public function getRolePrimaryKeyName()
     {
         $forced_pk_name = Configure:: read('acl.aro.role.primary_key');
-        if (!empty($forced_pk_name)) {
+        if ($forced_pk_name) {
             return $forced_pk_name;
         } else {
             /*
@@ -621,7 +621,7 @@ class AclManagerComponent extends Component
     public function getUserPrimaryKeyName()
     {
         $forced_pk_name = Configure:: read('acl.aro.user.primary_key');
-        if (!empty($forced_pk_name)) {
+        if ($forced_pk_name) {
             return $forced_pk_name;
         } else {
             /*
@@ -634,7 +634,7 @@ class AclManagerComponent extends Component
     public function getRoleForeignKeyName()
     {
         $forced_fk_name = Configure:: read('acl.aro.role.foreign_key');
-        if (!empty($forced_fk_name)) {
+        if ($forced_fk_name) {
             return $forced_fk_name;
         } else {
             /*
