@@ -72,7 +72,7 @@ class ArosController extends AppController
                 ])
                 ->first();
 
-            if (empty($aro)) {
+            if (!$aro) {
                 $missing_aros['roles'][] = $role;
             }
         }
@@ -89,7 +89,7 @@ class ArosController extends AppController
                 ])
                 ->first();
 
-            if (empty($aro)) {
+            if (!$aro) {
                 $missing_aros['users'][] = $user;
             }
         }
@@ -252,9 +252,9 @@ class ArosController extends AppController
         foreach ($actions as $full_action) {
             foreach ($roles as $role) {
                 $aro_node = $this->Acl->Aro->node($role);
-                if (!empty($aro_node)) {
+                if ($aro_node) {
                     $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $full_action);
-                    if (!empty($aco_node)) {
+                    if ($aco_node) {
                         $authorized = $this->Acl->check($role, $this->AclReflector->getRootNodeName() . '/' . $full_action);
 
                         $permissions[$full_action][$role->{$this->AclManager->getRolePrimaryKeyName()}] = $authorized ? 1 : 0;
@@ -283,7 +283,7 @@ class ArosController extends AppController
         $this->paginate['order'] = array($user_display_field => 'asc');
         $this->set('user_display_field', $user_display_field);
 
-        if (empty($user_id)) {
+        if (!$user_id) {
             if (isset($this->request->data['User'][$user_display_field]) || $this->request->session()->check('acl.aros.user_permissions.filter')) {
                 if (!isset($this->request->data['User'][$user_display_field])) {
                     $this->request->data['User'][$user_display_field] = $this->request->session()->read('acl.aros.user_permissions.filter');
@@ -317,7 +317,7 @@ class ArosController extends AppController
              * Check if the user exists in the ARO table
              */
             $user_aro = $this->Acl->Aro->node($user);
-            if (empty($user_aro)) {
+            if (!$user_aro) {
                 $display_user = $this->{$user_model_name}->find('first', array('conditions' => array($user_model_name . '.id' => $user_id, 'contain' => false, 'recursive' => -1)));
                 $this->Flash->error(sprintf(__d('acl', "The user '%s' does not exist in the ARO table"), $display_user->$user_display_field));
             } else {
@@ -326,7 +326,7 @@ class ArosController extends AppController
                 foreach ($actions as $full_action) {
                     if (!isset($this->params['named']['ajax'])) {
                         $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $full_action);
-                        if (!empty($aco_node)) {
+                        if ($aco_node) {
                             $authorized = $this->Acl->check($user, $this->AclReflector->getRootNodeName() . '/' . $full_action);
 
                             $permissions[$full_action][$user->{$this->AclManager->getUserPrimaryKeyName()}] = $authorized ? 1 : 0;
@@ -382,7 +382,7 @@ class ArosController extends AppController
         /*
          * Check if the user exists in the ARO table
          */
-        if (empty($node)) {
+        if (!$node) {
             $this->Flash->error(sprintf(__d('acl', "The user '%s' does not exist in the ARO table"), $user_id));
         } else {
             if ($this->Acl->adapter()->Permission->deleteAll(array('aro_id' => $node->toArray()[0]->id))) {
@@ -406,7 +406,7 @@ class ArosController extends AppController
         /*
          * Check if the Role exists in the ARO table
          */
-        if (empty($node)) {
+        if (!$node) {
             $this->Flash->error(sprintf(__d('acl', "The role '%s' does not exist in the ARO table"), $role_id)); // TODO FIX options
         } else {
             //Allow to everything
@@ -427,7 +427,7 @@ class ArosController extends AppController
         /*
          * Check if the Role exists in the ARO table
          */
-        if (empty($node)) {
+        if (!$node) {
             $this->Flash->error(sprintf(__d('acl', "The role '%s' does not exist in the ARO table"), $role_id)); // TODO FIX options
         } else {
             //Deny everything
@@ -444,7 +444,7 @@ class ArosController extends AppController
         $role_data = $role->get($role_id);
 
         $aro_node = $this->Acl->Aro->node($role_data);
-        if (!empty($aro_node)) {
+        if ($aro_node) {
             $plugin_name = isset($this->params['named']['plugin']) ? $this->params['named']['plugin'] : '';
             $controller_name = $this->params['named']['controller'];
             $controller_actions = $this->AclReflector->get_controller_actions($controller_name);
@@ -453,11 +453,11 @@ class ArosController extends AppController
 
             foreach ($controller_actions as $action_name) {
                 $aco_path = $plugin_name;
-                $aco_path .= empty($aco_path) ? $controller_name : '/' . $controller_name;
+                $aco_path .= !$aco_path ? $controller_name : '/' . $controller_name;
                 $aco_path .= '/' . $action_name;
 
                 $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $aco_path);
-                if (!empty($aco_node)) {
+                if ($aco_node) {
                     $authorized = $this->Acl->check($role_data, $this->AclReflector->getRootNodeName() . '/' . $aco_path);
                     $role_controller_permissions[$action_name] = $authorized;
                 } else {
@@ -486,7 +486,7 @@ class ArosController extends AppController
          * Check if the role exists in the ARO table
          */
         $aro_node = $this->{Configure:: read('acl.aro.role.model')}->get($role_id);
-        if (!empty($aro_node)) {
+        if ($aro_node) {
             if (!$this->Acl->allow($aro_node, $aco_path)) {
                 $this->set('acl_error', true);
             }
@@ -513,7 +513,7 @@ class ArosController extends AppController
          * Check if the role exists in the ARO table
          */
         $aro_node = $this->{Configure:: read('acl.aro.role.model')}->get($role_id);
-        if (!empty($aro_node)) {
+        if ($aro_node) {
             if (!$this->Acl->deny($aro_node, $aco_path)) {
                 $this->set('acl_error', true);
             }
@@ -538,7 +538,7 @@ class ArosController extends AppController
         $user_data = $user->get($user_id);
 
         $aro_node = $this->Acl->Aro->node($user_data);
-        if (!empty($aro_node)) {
+        if ($aro_node) {
             $plugin_name = isset($this->params['named']['plugin']) ? $this->params['named']['plugin'] : '';
             $controller_name = $this->params['named']['controller'];
             $controller_actions = $this->AclReflector->get_controller_actions($controller_name);
@@ -547,11 +547,11 @@ class ArosController extends AppController
 
             foreach ($controller_actions as $action_name) {
                 $aco_path = $plugin_name;
-                $aco_path .= empty($aco_path) ? $controller_name : '/' . $controller_name;
+                $aco_path .= !$aco_path ? $controller_name : '/' . $controller_name;
                 $aco_path .= '/' . $action_name;
 
                 $aco_node = $this->Acl->Aco->node($this->AclReflector->getRootNodeName() . '/' . $aco_path);
-                if (!empty($aco_node)) {
+                if ($aco_node) {
                     $authorized = $this->Acl->check($user_data, $this->AclReflector->getRootNodeName() . '/' . $aco_path);
                     $user_controller_permissions[$action_name] = $authorized;
                 } else {
@@ -580,7 +580,7 @@ class ArosController extends AppController
          * Check if the user exists in the ARO table
          */
         $aro_node = $this->{Configure:: read('acl.aro.user.model')}->get($user_id);
-        if (!empty($aro_node)) {
+        if ($aro_node) {
             if (!$this->Acl->allow($aro_node, $aco_path)) {
                 $this->set('acl_error', true);
             }
@@ -606,7 +606,7 @@ class ArosController extends AppController
          * Check if the user exists in the ARO table
          */
         $aro_node = $this->{Configure:: read('acl.aro.user.model')}->get($user_id);
-        if (!empty($aro_node)) {
+        if ($aro_node) {
             if (!$this->Acl->deny($aro_node, $aco_path)) {
                 $this->set('acl_error', true);
             }

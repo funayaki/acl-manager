@@ -33,7 +33,7 @@ class AcosController extends AppController
          */
         $controller_aco = $this->Acl->Aco->findByAlias('controllers')->first();
 
-        if (!empty($controller_aco)) {
+        if ($controller_aco) {
             $this->set('actions_exist', true);
 
             if (isset($run)) {
