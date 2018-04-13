@@ -263,6 +263,9 @@ class AclManagerComponent extends Component
         $file->write(serialize($current_controller_hashes));
     }
 
+    /**
+     * @return bool
+     */
     public function controllerHashFileIsOutOfSync()
     {
         if ($this->checkControllerHashTmpFile()) {
@@ -274,7 +277,7 @@ class AclManagerComponent extends Component
              */
             $updated_controllers = array_keys(Hash:: diff($current_controller_hashes, $stored_controller_hashes));
 
-            return $updated_controllers;
+            return (bool)$updated_controllers;
         }
     }
 
