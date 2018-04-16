@@ -2,6 +2,7 @@
 namespace AclManager\Test\TestCase\Controller\Admin;
 
 use Cake\Core\Configure;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestCase;
 
@@ -263,8 +264,21 @@ class ArosControllerTest extends IntegrationTestCase
     {
         $this->setUpAuth();
 
-        $this->get('/admin/acl_manager/aros/grant_user_permission/1');
+        $userId = 1;
+        $action = 'Roles/index';
+        $this->get(sprintf('/admin/acl_manager/aros/grant_user_permission/%s/%s', $userId, $action));
         $this->assertRedirect('/admin/acl_manager/aros');
+
+        $Permissions = TableRegistry::get('ArosAcos');
+        $count = $Permissions->find()
+            ->where([
+                '_create' => 1,
+                '_read' => 1,
+                '_update' => 1,
+                '_delete' => 1
+            ])
+            ->count();
+        $this->assertNotEquals(0, $count);
     }
 
     /**
@@ -276,8 +290,21 @@ class ArosControllerTest extends IntegrationTestCase
     {
         $this->setUpAuth();
 
-        $this->get('/admin/acl_manager/aros/deny_user_permission/1');
+        $userId = 1;
+        $action = 'Roles/index';
+        $this->get(sprintf('/admin/acl_manager/aros/deny_user_permission/%s/%s', $userId, $action));
         $this->assertRedirect('/admin/acl_manager/aros');
+
+        $Permissions = TableRegistry::get('ArosAcos');
+        $count = $Permissions->find()
+            ->where([
+                '_create' => -1,
+                '_read' => -1,
+                '_update' => -1,
+                '_delete' => -1
+            ])
+            ->count();
+        $this->assertNotEquals(0, $count);
     }
 }
 
