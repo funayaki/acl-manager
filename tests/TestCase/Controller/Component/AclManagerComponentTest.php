@@ -12,6 +12,15 @@ class AclManagerComponentTest extends TestCase
 {
 
     /**
+     * Fixtures
+     *
+     * @var array
+     */
+    public $fixtures = [
+        'plugin.acl_manager.acos',
+    ];
+
+    /**
      * Test subject
      *
      * @var \AclManager\Controller\Component\AclManagerComponent
