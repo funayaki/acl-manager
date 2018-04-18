@@ -1,5 +1,5 @@
 {
-  "name": "alaxos/acl",
+  "name": "tsmsogn/acl-manager",
   "type": "cakephp-plugin",
   "description": "This CakePHP plugin is an interface to manage an ACL protected web application.",
   "homepage": "http://www.alaxos.ch/blaxos/pages/view/34",
