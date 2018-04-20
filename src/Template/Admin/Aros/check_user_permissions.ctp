@@ -30,7 +30,7 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
     echo $this->Form->create('User');
     echo __d('acl', 'user');
     echo '<br/>';
-    echo $this->Form->input($user_display_field, array('label' => false, 'div' => false));
+    echo $this->Form->control($user_display_field, array('label' => false, 'div' => false));
     echo ' ';
     echo $this->Form->end(array('label' => __d('acl', 'filter'), 'div' => false));
     echo '<br/>';
