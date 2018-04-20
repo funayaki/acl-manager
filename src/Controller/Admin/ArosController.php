@@ -169,14 +169,16 @@ class ArosController extends AppController
 
         $this->{$user_model_name}->recursive = -1;
 
-        if (isset($this->request->data['User'][$user_display_field]) || $this->request->session()->check('acl.aros.users.filter')) {
-            if (!isset($this->request->data['User'][$user_display_field])) {
-                $this->request->data['User'][$user_display_field] = $this->request->session()->read('acl.aros.users.filter');
+        $user_display_value = $this->getRequest()->getData('User.' . $user_display_field);
+
+        if (isset($user_display_value) || $this->getRequest()->getSession()->check('acl.aros.users.filter')) {
+            if (!isset($user_display_value)) {
+                $this->getRequest()->setData('User.' . $user_display_field, $this->getRequest()->getSession()->read('acl.aros.users.filter'));
             } else {
-                $this->request->session()->write('acl.aros.users.filter', $this->request->data['User'][$user_display_field]);
+                $this->getRequest()->getSession()->write('acl.aros.users.filter', $this->getRequest()->getData('User.' . $user_display_field));
             }
 
-            $filter = array($user_model_name . '.' . $user_display_field . ' LIKE' => '%' . $this->request->data['User'][$user_display_field] . '%');
+            $filter = array($user_model_name . '.' . $user_display_field . ' LIKE' => '%' . $this->getRequest()->getData('User.' . $user_display_field) . '%');
         } else {
             $filter = array();
         }
@@ -284,14 +286,15 @@ class ArosController extends AppController
         $this->set('user_display_field', $user_display_field);
 
         if (!$user_id) {
-            if (isset($this->request->data['User'][$user_display_field]) || $this->request->session()->check('acl.aros.user_permissions.filter')) {
-                if (!isset($this->request->data['User'][$user_display_field])) {
-                    $this->request->data['User'][$user_display_field] = $this->request->session()->read('acl.aros.user_permissions.filter');
+			$user_display_value = $this->getRequest()->getData('User.' . $user_display_field);
+            if (isset($user_display_value) || $this->getRequest()->getSession()->check('acl.aros.user_permissions.filter')) {
+                if (!isset($user_display_value)) {
+					$this->getRequest()->setData('User.' . $user_display_field, $this->getRequest()->getSession()->read('acl.aros.user_permissions.filter'));
                 } else {
-                    $this->request->session()->write('acl.aros.user_permissions.filter', $this->request->data['User'][$user_display_field]);
+                    $this->getRequest()->getSession()->write('acl.aros.user_permissions.filter', $this->getRequest()->getData('User.' . $user_display_field));
                 }
 
-                $filter = array($user_model_name . '.' . $user_display_field . ' LIKE' => '%' . $this->request->data['User'][$user_display_field] . '%');
+                $filter = array($user_model_name . '.' . $user_display_field . ' LIKE' => '%' . $this->getRequest()->getData('User.' . $user_display_field) . '%');
             } else {
                 $filter = array();
             }
@@ -469,7 +472,7 @@ class ArosController extends AppController
             //$this->set('acl_error_aro', true);
         }
 
-        if ($this->request->is('Ajax')) {
+        if ($this->getRequest()->is('Ajax')) {
             Configure::write('debug', 0); //-> to disable printing of generation time preventing correct JSON parsing
             echo json_encode($role_controller_permissions);
             $this->autoRender = false;
@@ -498,7 +501,7 @@ class ArosController extends AppController
         $this->set('role_id', $role_id);
         $this->set('action', $aco_path);
 
-        if ($this->request->is('Ajax')) {
+        if ($this->getRequest()->is('Ajax')) {
             $this->render('ajax_role_granted');
         } else {
             $this->_returnToReferer();
@@ -524,7 +527,7 @@ class ArosController extends AppController
         $this->set('role_id', $role_id);
         $this->set('action', $aco_path);
 
-        if ($this->request->is('Ajax')) {
+        if ($this->getRequest()->is('Ajax')) {
             $this->render('ajax_role_denied');
         } else {
             $this->_returnToReferer();
@@ -563,7 +566,7 @@ class ArosController extends AppController
             //$this->set('acl_error_aro', true);
         }
 
-        if ($this->request->is('Ajax')) {
+        if ($this->getRequest()->is('Ajax')) {
             Configure::write('debug', 0); //-> to disable printing of generation time preventing correct JSON parsing
             echo json_encode($user_controller_permissions);
             $this->autoRender = false;
@@ -591,7 +594,7 @@ class ArosController extends AppController
         $this->set('user_id', $user_id);
         $this->set('action', $aco_path);
 
-        if ($this->request->is('Ajax')) {
+        if ($this->getRequest()->is('Ajax')) {
             $this->render('ajax_user_granted');
         } else {
             $this->_returnToReferer();
@@ -617,7 +620,7 @@ class ArosController extends AppController
         $this->set('user_id', $user_id);
         $this->set('action', $aco_path);
 
-        if ($this->request->is('Ajax')) {
+        if ($this->getRequest()->is('Ajax')) {
             $this->render('ajax_user_denied');
         } else {
             $this->_returnToReferer();
