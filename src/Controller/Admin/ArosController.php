@@ -214,7 +214,7 @@ class ArosController extends AppController
         if ($this->{$user_model_name}->save($user)) {
             $this->Flash->success(__d('acl', 'The user role has been updated'));
         } else {
-            $this->Flash->error(print_r($user->errors(), true));
+            $this->Flash->error(print_r($user->getErrors(), true));
         }
 
         $this->_returnToReferer();
