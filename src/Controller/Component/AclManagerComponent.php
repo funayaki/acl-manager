@@ -78,7 +78,7 @@ class AclManagerComponent extends Component
 
         $behaviors = $user_model->behaviors();
         if ($behaviors && $behaviors->has('Acl')) {
-            $type = $behaviors->get('Acl')->getConfig('type');
+            $type = $behaviors->get('Acl')->config('type');
             return $type == 'requester';
         }
 
@@ -98,7 +98,7 @@ class AclManagerComponent extends Component
     {
         $model_instance = $this->getModelInstance($model_classname);
 
-        $schema = $model_instance->getSchema();
+        $schema = $model_instance->schema();
 
         if ($schema->hasColumn($field_expression)
             ||

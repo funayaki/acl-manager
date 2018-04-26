@@ -95,7 +95,7 @@ class AppController extends BaseController
 
                 if ($has_updates) {
                     $this->render('/Admin/Acos/has_updates');
-                    $this->getResponse()->send();
+                    $this->response->send();
                     $this->AclManager->updateControllersHashFile();
                     die();
                 } else {
