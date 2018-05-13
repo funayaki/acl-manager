@@ -10,21 +10,15 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
 </nav>
 <div class="aros role_permissions large-9 medium-8 columns content">
 
-    <?php
-    echo $this->element('design/header');
-    ?>
+    <?= $this->element('design/header'); ?>
 
-    <?php
-    echo $this->element('Aros/links');
-    ?>
+    <?= $this->element('Aros/links'); ?>
 
     <div class="separator"></div>
 
     <div>
 
-        <?php
-        echo $this->Html->link($this->Html->image('/acl_manager/img/design/cross.png') . ' ' . __d('acl', 'Clear permissions table'), '/admin/acl_manager/aros/empty_permissions', array('confirm' => __d('acl', 'Are you sure you want to delete all roles and users permissions ?'), 'escape' => false));
-        ?>
+        <?= $this->Html->link($this->Html->image('/acl_manager/img/design/cross.png') . ' ' . __d('acl', 'Clear permissions table'), '/admin/acl_manager/aros/empty_permissions', array('confirm' => __d('acl', 'Are you sure you want to delete all roles and users permissions ?'), 'escape' => false)); ?>
 
 
     </div>
@@ -34,9 +28,9 @@ echo $this->Html->script('/acl_manager/js/acl_plugin');
     <table cellspacing="0">
 
         <tr>
-            <th><?php echo h($role_display_field); ?></th>
-            <th><?php echo __d('acl', 'grant access to <em>all actions</em>'); ?></th>
-            <th><?php echo __d('acl', 'deny access to <em>all actions</em>'); ?></th>
+            <th><?= h($role_display_field); ?></th>
+            <th><?= __d('acl', 'grant access to <em>all actions</em>'); ?></th>
+            <th><?= __d('acl', 'deny access to <em>all actions</em>'); ?></th>
         </tr>
 
         <?php
