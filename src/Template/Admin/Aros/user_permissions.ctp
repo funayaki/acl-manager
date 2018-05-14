@@ -36,7 +36,7 @@ echo $this->Html->script('/acl_manager/js/acl_manager', ['block' => true]);
                                 echo $this->Html->image('/acl_manager/img/design/tick.png');
                             } else {
                                 $title = __d('acl', 'Update the user role');
-                                echo $this->Html->link($this->Html->image('/acl_manager/img/design/tick_disabled.png'), array('action' => 'updateUserRole', $user->$user_pk_name, $role->$role_pk_name), array('title' => $title, 'alt' => $title, 'escape' => false));
+                                echo $this->Html->link($this->Html->image('/acl_manager/img/design/tick_disabled.png'), ['action' => 'updateUserRole', $user->$user_pk_name, $role->$role_pk_name], ['title' => $title, 'alt' => $title, 'escape' => false]);
                             }
 
                             echo '</td>';
@@ -87,11 +87,11 @@ echo $this->Html->script('/acl_manager/js/acl_manager', ['block' => true]);
                         if ($permissions[$action][$user->$user_pk_name] == 1) {
                             $this->Js->buffer('register_user_toggle_right(true, "' . $this->Url->build('/') . '", "' . $spanId . '", "' . $user->$user_pk_name . '", "' . $action . '")');
 
-                            echo $this->Html->image('/acl_manager/img/design/tick.png', array('class' => 'pointer'));
+                            echo $this->Html->image('/acl_manager/img/design/tick.png', ['class' => 'pointer']);
                         } elseif ($permissions[$action][$user->$user_pk_name] == 0) {
                             $this->Js->buffer('register_user_toggle_right(false, "' . $this->Url->build('/') . '", "' . $spanId . '", "' . $user->$user_pk_name . '", "' . $action . '")');
 
-                            echo $this->Html->image('/acl_manager/img/design/cross.png', array('class' => 'pointer'));
+                            echo $this->Html->image('/acl_manager/img/design/cross.png', ['class' => 'pointer']);
                         } elseif ($permissions[$action][$user->$user_pk_name] == -1) {
                             echo $this->Html->image('/acl_manager/img/design/important16.png');
                         }
@@ -99,7 +99,7 @@ echo $this->Html->script('/acl_manager/js/acl_manager', ['block' => true]);
                         echo '</span>';
 
                         echo ' ';
-                        echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => '' . $spanId . '_spinner', 'style' => 'display:none;'));
+                        echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', ['id' => '' . $spanId . '_spinner', 'style' => 'display:none;']);
 
                         echo '</td>';
                         echo '</tr>';

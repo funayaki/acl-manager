@@ -94,23 +94,23 @@ echo $this->Html->script('/acl_manager/js/acl_manager', ['block' => true]);
                                 if ($permissions[$action][$role->$role_pk_name] == 1) {
                                     $this->Js->buffer('register_role_toggle_right(true, "' . $this->Url->build('/') . '", "' . $spanId . '", "' . $role->$role_pk_name . '", "' . $action . '")');
 
-                                    echo $this->Html->image('/acl_manager/img/design/tick.png', array('class' => 'pointer'));
+                                    echo $this->Html->image('/acl_manager/img/design/tick.png', ['class' => 'pointer']);
                                 } else {
                                     $this->Js->buffer('register_role_toggle_right(false, "' . $this->Url->build('/') . '", "' . $spanId . '", "' . $role->$role_pk_name . '", "' . $action . '")');
 
-                                    echo $this->Html->image('/acl_manager/img/design/cross.png', array('class' => 'pointer'));
+                                    echo $this->Html->image('/acl_manager/img/design/cross.png', ['class' => 'pointer']);
                                 }
                             } else {
                                 /*
                                  * The right of the action for the role is unknown
                                  */
-                                echo $this->Html->image('/acl_manager/img/design/important16.png', array('title' => __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.')));
+                                echo $this->Html->image('/acl_manager/img/design/important16.png', ['title' => __d('acl', 'The ACO node is probably missing. Please try to rebuild the ACOs first.')]);
                             }
 
                             echo '</span>';
 
                             echo ' ';
-                            echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', array('id' => '' . $spanId . '_spinner', 'style' => 'display:none;'));
+                            echo $this->Html->image('/acl_manager/img/ajax/waiting16.gif', ['id' => '' . $spanId . '_spinner', 'style' => 'display:none;']);
 
                             echo '</td>';
                         }
