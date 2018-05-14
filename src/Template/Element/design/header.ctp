@@ -3,16 +3,11 @@
  * @var \App\View\AppView $this
  */
 ?>
-<?php
-echo $this->Html->css('/acl_manager/css/acl.css');
-?>
-    <div id="plugin_acl">
+<?= $this->Html->css('/acl_manager/css/acl.css'); ?>
 
-<?php
-echo $this->Flash->render('plugin_acl');
-?>
+<?= $this->Flash->render('plugin_acl'); ?>
 
-    <h1><?php echo __d('acl', 'ACL plugin'); ?></h1>
+    <h1><?= __d('acl', 'ACL plugin'); ?></h1>
 
 <?php
 
