@@ -1,15 +1,12 @@
 <?php
 namespace AclManager\Controller\Admin;
 
-use Acl\Adapter\DbAcl;
 use Acl\Controller\Component\AclComponent;
 use Acl\Model\Table\ArosTable;
-use AclManager\Controller\AppController;
 use AclManager\Controller\Component\AclReflectorComponent;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
-use Cake\ORM\TableRegistry;
 
 /**
  *

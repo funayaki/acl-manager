@@ -9,8 +9,6 @@
  */
 namespace AclManager\Controller\Admin;
 
-use AclManager\Controller\AppController;
-
 class AcosController extends AppController
 {
 
