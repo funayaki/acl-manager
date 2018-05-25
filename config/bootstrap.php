@@ -22,7 +22,7 @@ if (!Configure::check('acl.aro.role.model')) {
  * (can be left empty if your primary key's name follows CakePHP conventions)('id')
  */
 if (!Configure::check('acl.aro.role.primary_key')) {
-    Configure::write('acl.aro.role.primary_key', '');
+    Configure::write('acl.aro.role.primary_key', 'id');
 }
 
 /*
@@ -31,7 +31,7 @@ if (!Configure::check('acl.aro.role.primary_key')) {
  * (can be left empty if your foreign key's name follows CakePHP conventions)(e.g. 'role_id')
  */
 if (!Configure::check('acl.aro.role.foreign_key')) {
-    Configure::write('acl.aro.role.foreign_key', '');
+    Configure::write('acl.aro.role.foreign_key', 'role_id');
 }
 
 /*
@@ -47,7 +47,7 @@ if (!Configure::check('acl.aro.user.model')) {
  * (can be left empty if your primary key's name follows CakePHP conventions)('id')
  */
 if (!Configure::check('acl.aro.user.primary_key')) {
-    Configure::write('acl.aro.user.primary_key', '');
+    Configure::write('acl.aro.user.primary_key', 'id');
 }
 
 /*
