@@ -10,6 +10,7 @@
 namespace AclManager\Controller\Admin;
 
 use AclManager\Controller\Component\AclManagerComponent;
+use AclManager\Utility\AclConfigManager;
 use App\Controller\Admin\AppController as BaseController;
 use Cake\Core\Configure;
 use Cake\Event\Event;
@@ -23,7 +24,7 @@ class AppController extends BaseController
 
     public function beforeFilter(Event $event)
     {
-        parent:: beforeFilter($event);
+        parent::beforeFilter($event);
 
         $this->_checkConfig();
         $this->_checkFilesUpdates();
@@ -31,26 +32,24 @@ class AppController extends BaseController
 
     private function _checkConfig()
     {
-        $role_model_name = Configure:: read('acl.aro.role.model');
-
-        if ($role_model_name) {
-            $this->set('role_model_name', $role_model_name);
-            $this->set('user_model_name', Configure:: read('acl.aro.user.model'));
-            $this->set('role_pk_name', $this->AclManager->getRolePrimaryKeyName());
-            $this->set('user_pk_name', $this->AclManager->getUserPrimaryKeyName());
-            $this->set('role_fk_name', $this->AclManager->getRoleForeignKeyName());
+        if (AclConfigManager::getRoleModel()) {
+            $this->set('role_model_name', AclConfigManager::getRoleModel());
+            $this->set('user_model_name', AclConfigManager::getUserModel());
+            $this->set('role_pk_name', AclConfigManager::getRolePrimaryKey());
+            $this->set('user_pk_name', AclConfigManager::getUserPrimaryKey());
+            $this->set('role_fk_name', AclConfigManager::getRoleForeignKey());
 
             $this->_authorizeAdmins();
 
-            if (Configure:: read('acl.check_act_as_requester')) {
+            if (Configure::read('acl.check_act_as_requester')) {
                 $is_requester = true;
 
-                if (!$this->AclManager->checkUserModelActsAsAclRequester(Configure:: read('acl.aro.user.model'))) {
+                if (!$this->AclManager->checkUserModelActsAsAclRequester(AclConfigManager::getUserModel())) {
                     $this->set('model_is_not_requester', false);
                     $is_requester = false;
                 }
 
-                if (!$this->AclManager->checkUserModelActsAsAclRequester(Configure:: read('acl.aro.role.model'))) {
+                if (!$this->AclManager->checkUserModelActsAsAclRequester(AclConfigManager::getRoleModel())) {
                     $this->set('role_is_not_requester', false);
                     $is_requester = false;
                 }
@@ -106,13 +105,13 @@ class AppController extends BaseController
 
     private function _authorizeAdmins()
     {
-        $authorized_role_ids = Configure:: read('acl.role.access_plugin_role_ids');
-        $authorized_user_ids = Configure:: read('acl.role.access_plugin_user_ids');
+        $authorized_role_ids = Configure::read('acl.role.access_plugin_role_ids');
+        $authorized_user_ids = Configure::read('acl.role.access_plugin_user_ids');
 
-        $model_role_fk = $this->AclManager->getRoleForeignKeyName();
+        $model_role_fk = AclConfigManager::getRoleForeignKey();
 
         if (in_array($this->Auth->user($model_role_fk), $authorized_role_ids)
-            || in_array($this->Auth->user($this->AclManager->getUserPrimaryKeyName()), $authorized_user_ids)
+            || in_array($this->Auth->user(AclConfigManager::getUserPrimaryKey()), $authorized_user_ids)
         ) {
             // Allow all actions. CakePHP 2.0
             $this->Auth->allow('*');

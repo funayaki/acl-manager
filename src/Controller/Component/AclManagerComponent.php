@@ -67,7 +67,7 @@ class AclManagerComponent extends Component
 //			/*
 //			 * Do not use $this->controller->loadModel, as calling it from a plugin may prevent correct loading of behaviors
 //			 */
-//			$user_model = ClassRegistry :: init($model_classname);
+//			$user_model = ClassRegistry::init($model_classname);
 //		}
 //		else
 //		{
@@ -275,7 +275,7 @@ class AclManagerComponent extends Component
             /*
              * Check what controllers have changed
              */
-            $updated_controllers = array_keys(Hash:: diff($current_controller_hashes, $stored_controller_hashes));
+            $updated_controllers = array_keys(Hash::diff($current_controller_hashes, $stored_controller_hashes));
 
             return (bool)$updated_controllers;
         }
@@ -332,9 +332,9 @@ class AclManagerComponent extends Component
             $aco_path = $this->AclReflector->getRootNodeName() . '/' . $aco_path;
 
             $pk_name = 'id';
-            if ($aro_nodes[0]['Aro']['model'] == Configure:: read('acl.aro.role.model')) {
+            if ($aro_nodes[0]['Aro']['model'] == Configure::read('acl.aro.role.model')) {
                 $pk_name = $this->getRolePrimaryKeyName();
-            } elseif ($aro_nodes[0]['Aro']['model'] == Configure:: read('acl.aro.user.model')) {
+            } elseif ($aro_nodes[0]['Aro']['model'] == Configure::read('acl.aro.user.model')) {
                 $pk_name = $this->getUserPrimaryKeyName();
             }
 
@@ -432,9 +432,9 @@ class AclManagerComponent extends Component
     private function getSpecificPermissionRight($aro_node, $aco_path)
     {
         $pk_name = 'id';
-        if ($aro_node['Aro']['model'] == Configure:: read('acl.aro.role.model')) {
+        if ($aro_node['Aro']['model'] == Configure::read('acl.aro.role.model')) {
             $pk_name = $this->getRolePrimaryKeyName();
-        } elseif ($aro_node['Aro']['model'] == Configure:: read('acl.aro.user.model')) {
+        } elseif ($aro_node['Aro']['model'] == Configure::read('acl.aro.user.model')) {
             $pk_name = $this->getUserPrimaryKeyName();
         }
 
@@ -477,9 +477,9 @@ class AclManagerComponent extends Component
     private function getFirstParentPermissionRight($aro_node, $aco_path)
     {
         $pk_name = 'id';
-        if ($aro_node['Aro']['model'] == Configure:: read('acl.aro.role.model')) {
+        if ($aro_node['Aro']['model'] == Configure::read('acl.aro.role.model')) {
             $pk_name = $this->getRolePrimaryKeyName();
-        } elseif ($aro_node['Aro']['model'] == Configure:: read('acl.aro.user.model')) {
+        } elseif ($aro_node['Aro']['model'] == Configure::read('acl.aro.user.model')) {
             $pk_name = $this->getUserPrimaryKeyName();
         }
 
@@ -525,7 +525,7 @@ class AclManagerComponent extends Component
             $user = $this->Auth->user();
 
             if ($user) {
-                $user = array(Configure:: read('acl.aro.user.model') => $user);
+                $user = array(Configure::read('acl.aro.user.model') => $user);
                 $permissions = array();
 
                 foreach ($actions as $action) {
@@ -610,7 +610,7 @@ class AclManagerComponent extends Component
 
     public function getRolePrimaryKeyName()
     {
-        $forced_pk_name = Configure:: read('acl.aro.role.primary_key');
+        $forced_pk_name = Configure::read('acl.aro.role.primary_key');
         if ($forced_pk_name) {
             return $forced_pk_name;
         } else {
@@ -623,7 +623,7 @@ class AclManagerComponent extends Component
 
     public function getUserPrimaryKeyName()
     {
-        $forced_pk_name = Configure:: read('acl.aro.user.primary_key');
+        $forced_pk_name = Configure::read('acl.aro.user.primary_key');
         if ($forced_pk_name) {
             return $forced_pk_name;
         } else {
@@ -636,14 +636,14 @@ class AclManagerComponent extends Component
 
     public function getRoleForeignKeyName()
     {
-        $forced_fk_name = Configure:: read('acl.aro.role.foreign_key');
+        $forced_fk_name = Configure::read('acl.aro.role.foreign_key');
         if ($forced_fk_name) {
             return $forced_fk_name;
         } else {
             /*
              * Return the foreign key's name that follows the CakePHP conventions
              */
-            return Inflector:: underscore(Inflector::singularize(Configure:: read('acl.aro.role.model'))) . '_id';
+            return Inflector::underscore(Inflector::singularize(Configure::read('acl.aro.role.model'))) . '_id';
         }
     }
 }
