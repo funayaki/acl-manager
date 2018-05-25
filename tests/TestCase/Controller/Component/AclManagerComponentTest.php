@@ -194,34 +194,4 @@ class AclManagerComponentTest extends TestCase
         ];
         $this->assertEquals($expected, $actual);
     }
-
-    /**
-     * Test getRolePrimaryKeyName method
-     *
-     * @return void
-     */
-    public function testGetRolePrimaryKeyName()
-    {
-        $this->assertEquals('id', $this->AclManager->getRolePrimaryKeyName());
-    }
-
-    /**
-     * Test getUserPrimaryKeyName method
-     *
-     * @return void
-     */
-    public function testGetUserPrimaryKeyName()
-    {
-        $this->assertEquals('id', $this->AclManager->getUserPrimaryKeyName());
-    }
-
-    /**
-     * Test getRoleForeignKeyName method
-     *
-     * @return void
-     */
-    public function testGetRoleForeignKeyName()
-    {
-        $this->assertEquals('role_id', $this->AclManager->getRoleForeignKeyName());
-    }
 }

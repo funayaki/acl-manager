@@ -7,6 +7,7 @@ use AclManager\Controller\Component\AclReflectorComponent;
 namespace AclManager\Controller\Component;
 
 use Acl\Controller\Component\AclComponent;
+use AclManager\Utility\AclConfigManager;
 use Cake\Controller\Component;
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
@@ -333,9 +334,9 @@ class AclManagerComponent extends Component
 
             $pk_name = 'id';
             if ($aro_nodes[0]['Aro']['model'] == Configure::read('acl.aro.role.model')) {
-                $pk_name = $this->getRolePrimaryKeyName();
+                $pk_name = AclConfigManager::getRolePrimaryKey();
             } elseif ($aro_nodes[0]['Aro']['model'] == Configure::read('acl.aro.user.model')) {
-                $pk_name = $this->getUserPrimaryKeyName();
+                $pk_name = AclConfigManager::getUserPrimaryKey();
             }
 
             $aro_model_data = array($aro_nodes[0]['Aro']['model'] => array($pk_name => $aro_nodes[0]['Aro']['foreign_key']));
@@ -433,9 +434,9 @@ class AclManagerComponent extends Component
     {
         $pk_name = 'id';
         if ($aro_node['Aro']['model'] == Configure::read('acl.aro.role.model')) {
-            $pk_name = $this->getRolePrimaryKeyName();
+            $pk_name = AclConfigManager::getRolePrimaryKey();
         } elseif ($aro_node['Aro']['model'] == Configure::read('acl.aro.user.model')) {
-            $pk_name = $this->getUserPrimaryKeyName();
+            $pk_name = AclConfigManager::getUserPrimaryKey();
         }
 
         $aro_model_data = array($aro_node['Aro']['model'] => array($pk_name => $aro_node['Aro']['foreign_key']));
@@ -478,9 +479,9 @@ class AclManagerComponent extends Component
     {
         $pk_name = 'id';
         if ($aro_node['Aro']['model'] == Configure::read('acl.aro.role.model')) {
-            $pk_name = $this->getRolePrimaryKeyName();
+            $pk_name = AclConfigManager::getRolePrimaryKey();
         } elseif ($aro_node['Aro']['model'] == Configure::read('acl.aro.user.model')) {
-            $pk_name = $this->getUserPrimaryKeyName();
+            $pk_name = AclConfigManager::getUserPrimaryKey();
         }
 
         $aro_model_data = array($aro_node['Aro']['model'] => array($pk_name => $aro_node['Aro']['foreign_key']));
@@ -606,44 +607,5 @@ class AclManagerComponent extends Component
         }
 
         return $rootNode;
-    }
-
-    public function getRolePrimaryKeyName()
-    {
-        $forced_pk_name = Configure::read('acl.aro.role.primary_key');
-        if ($forced_pk_name) {
-            return $forced_pk_name;
-        } else {
-            /*
-             * Return the primary key's name that follows the CakePHP conventions
-             */
-            return 'id';
-        }
-    }
-
-    public function getUserPrimaryKeyName()
-    {
-        $forced_pk_name = Configure::read('acl.aro.user.primary_key');
-        if ($forced_pk_name) {
-            return $forced_pk_name;
-        } else {
-            /*
-             * Return the primary key's name that follows the CakePHP conventions
-             */
-            return 'id';
-        }
-    }
-
-    public function getRoleForeignKeyName()
-    {
-        $forced_fk_name = Configure::read('acl.aro.role.foreign_key');
-        if ($forced_fk_name) {
-            return $forced_fk_name;
-        } else {
-            /*
-             * Return the foreign key's name that follows the CakePHP conventions
-             */
-            return Inflector::underscore(Inflector::singularize(Configure::read('acl.aro.role.model'))) . '_id';
-        }
     }
 }
